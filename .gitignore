@@ -1,0 +1,14 @@
+# Secrets — NEVER upload these
+google-credentials.json
+.env
+
+# Local database files (will be empty on server anyway)
+messages.json
+users.json
+
+# Node modules
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SicKloT | Create Account</title>
+    <meta name="description" content="Create your SicKloT account and join the community.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg:     #050507;
+            --card:   rgba(14,16,26,0.85);
+            --blue:   #0055ff;
+            --glow:   #00d2ff;
+            --border: rgba(255,255,255,0.08);
+            --muted:  #8b949e;
+            --text:   #cbd5e1;
+            --white:  #ffffff;
+            --tr:     all 0.3s cubic-bezier(0.25,0.8,0.25,1);
+        }
+        html { height: 100%; }
+        body {
+            min-height: 100%;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            display: flex; align-items: center; justify-content: center;
+            padding: 24px;
+            position: relative; overflow: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            width: 700px; height: 700px; border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,85,255,0.1) 0%, transparent 65%);
+            top: -180px; left: 50%; transform: translateX(-50%);
+            pointer-events: none;
+            animation: pulse 6s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%,100%{opacity:0.6;transform:translateX(-50%) scale(1)} 50%{opacity:1;transform:translateX(-50%) scale(1.1)} }
+
+        .auth-card {
+            width: 100%; max-width: 460px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 44px 44px;
+            backdrop-filter: blur(20px);
+            position: relative; overflow: hidden;
+            animation: fadeUp 0.5s ease both;
+        }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:none} }
+        .auth-card::before {
+            content: '';
+            position: absolute; top:0;left:0;right:0;height:3px;
+            background: linear-gradient(90deg, var(--blue), var(--glow));
+        }
+
+        .logo {
+            display: flex; align-items: center; gap: 10px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem; font-weight: 800;
+            color: var(--white); margin-bottom: 24px;
+            text-decoration: none;
+        }
+        .logo i { color: var(--glow); font-size: 1.3rem; }
+
+        .auth-title { font-family:'Outfit',sans-serif; font-size:1.8rem; font-weight:800; color:var(--white); margin-bottom:6px; }
+        .auth-sub   { color:var(--muted); font-size:0.92rem; margin-bottom:28px; }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+        .form-group { margin-bottom: 18px; }
+        .form-group label {
+            display: block; font-size:0.83rem; font-weight:600;
+            color: var(--text); margin-bottom: 7px; letter-spacing:0.3px;
+        }
+        .optional { color:var(--muted); font-weight:400; font-size:0.78rem; margin-left:4px; }
+        .input-wrap { position: relative; }
+        .input-wrap i.icon {
+            position: absolute; left: 14px; top: 50%;
+            transform: translateY(-50%); color: var(--muted);
+            font-size: 0.9rem; pointer-events:none;
+        }
+        .input-wrap input {
+            width: 100%; padding: 12px 16px 12px 40px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.04);
+            color: var(--white);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.93rem; outline: none;
+            transition: var(--tr);
+        }
+        .input-wrap input::placeholder { color: var(--muted); }
+        .input-wrap input:focus {
+            border-color: var(--blue);
+            box-shadow: 0 0 0 3px rgba(0,85,255,0.15);
+            background: rgba(0,85,255,0.04);
+        }
+        .input-wrap input.invalid { border-color: rgba(239,68,68,0.6); }
+        .input-wrap input.valid   { border-color: rgba(52,211,153,0.6); }
+
+        .toggle-pass {
+            position: absolute; right:14px; top:50%;
+            transform: translateY(-50%);
+            color: var(--muted); cursor: pointer; font-size:0.9rem;
+            transition: color 0.2s;
+        }
+        .toggle-pass:hover { color: var(--glow); }
+
+        /* Password strength bar */
+        .pw-strength { margin-top: 8px; }
+        .pw-bar {
+            height: 4px; border-radius: 4px;
+            background: var(--border);
+            overflow: hidden;
+        }
+        .pw-fill {
+            height: 100%; border-radius:4px;
+            width: 0; transition: width 0.3s, background 0.3s;
+        }
+        .pw-label { font-size:0.75rem; color:var(--muted); margin-top:4px; }
+
+        .terms {
+            display: flex; align-items: flex-start; gap: 10px;
+            font-size: 0.85rem; color: var(--muted); margin-bottom: 22px;
+        }
+        .terms input[type=checkbox] { margin-top: 2px; accent-color: var(--blue); width:15px; height:15px; flex-shrink:0; }
+        .terms a { color: var(--glow); }
+
+        .error-msg {
+            background: rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.25);
+            color: #f87171; border-radius:8px; padding:10px 14px;
+            font-size:0.88rem; margin-bottom:16px; display:none;
+        }
+        .error-msg.show { display:flex; align-items:center; gap:8px; }
+
+        .success-msg {
+            background: rgba(52,211,153,0.08); border:1px solid rgba(52,211,153,0.25);
+            color: #6ee7b7; border-radius:12px; padding:24px;
+            font-size:0.93rem; margin-bottom:16px; display:none;
+            text-align: center; flex-direction: column; align-items: center; gap: 10px;
+        }
+        .success-msg.show { display:flex; }
+        .success-msg i { font-size: 2.5rem; margin-bottom: 4px; }
+
+        .btn-submit {
+            width:100%; padding:14px;
+            border-radius:10px; border:none;
+            background: linear-gradient(135deg, var(--glow), var(--blue));
+            color: #000; font-family:'Inter',sans-serif;
+            font-size:1rem; font-weight:700; cursor:pointer;
+            transition: var(--tr);
+            display:flex; align-items:center; justify-content:center; gap:10px;
+        }
+        .btn-submit:hover { transform:translateY(-2px); box-shadow: 0 8px 24px rgba(0,85,255,0.45); filter:brightness(1.08); }
+        .btn-submit:disabled { opacity:0.6; pointer-events:none; }
+
+        .auth-footer { text-align:center; margin-top:24px; font-size:0.88rem; color:var(--muted); }
+        .auth-footer a { color:var(--glow); text-decoration:none; font-weight:600; transition:color 0.2s; }
+        .auth-footer a:hover { color:var(--white); }
+
+        @media (max-width: 500px) {
+            .auth-card { padding: 36px 24px; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-card">
+        <a href="index.html" class="logo">
+            <i class="fa-solid fa-cube"></i> SicKloT
+        </a>
+
+        <h1 class="auth-title">Create Account ✨</h1>
+        <p class="auth-sub">Join SicKloT and unlock premium community tools</p>
+
+        <div class="error-msg" id="errorMsg">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span id="errorText"></span>
+        </div>
+
+        <div class="success-msg" id="successMsg">
+            <i class="fa-solid fa-circle-check"></i>
+            <strong>Account Created!</strong>
+            <span>Redirecting to login…</span>
+        </div>
+
+        <form id="signupForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-user icon"></i>
+                        <input type="text" id="username" placeholder="coolname" required minlength="3">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="discord">Discord <span class="optional">optional</span></label>
+                    <div class="input-wrap">
+                        <i class="fa-brands fa-discord icon"></i>
+                        <input type="text" id="discord" placeholder="@username">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <div class="input-wrap">
+                    <i class="fa-solid fa-envelope icon"></i>
+                    <input type="email" id="email" placeholder="you@example.com" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-wrap">
+                    <i class="fa-solid fa-lock icon"></i>
+                    <input type="password" id="password" placeholder="Min. 8 characters" required minlength="8" oninput="checkStrength(this.value)">
+                    <span class="toggle-pass" id="tp1"><i class="fa-solid fa-eye"></i></span>
+                </div>
+                <div class="pw-strength">
+                    <div class="pw-bar"><div class="pw-fill" id="pwFill"></div></div>
+                    <div class="pw-label" id="pwLabel">Enter a password</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm">Confirm Password</label>
+                <div class="input-wrap">
+                    <i class="fa-solid fa-lock icon"></i>
+                    <input type="password" id="confirm" placeholder="Repeat password" required>
+                    <span class="toggle-pass" id="tp2"><i class="fa-solid fa-eye"></i></span>
+                </div>
+            </div>
+
+            <div class="terms">
+                <input type="checkbox" id="agree" required>
+                <label for="agree">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">
+                <i class="fa-solid fa-user-plus"></i> Create Account
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            Already have an account? <a href="login.html">Sign in &rarr;</a>
+        </div>
+    </div>
+
+    <script>
+        // Password visibility toggles
+        function makeToggle(btnId, inputId) {
+            document.getElementById(btnId).addEventListener('click', () => {
+                const pw  = document.getElementById(inputId);
+                const ico = document.querySelector(`#${btnId} i`);
+                const vis = pw.type === 'password';
+                pw.type       = vis ? 'text' : 'password';
+                ico.className = vis ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+            });
+        }
+        makeToggle('tp1', 'password');
+        makeToggle('tp2', 'confirm');
+
+        // Password strength meter
+        function checkStrength(val) {
+            const fill  = document.getElementById('pwFill');
+            const label = document.getElementById('pwLabel');
+            let score = 0;
+            if (val.length >= 8)  score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+
+            const cfg = [
+                { w:'0%',   bg:'transparent', t:'Enter a password' },
+                { w:'25%',  bg:'#ef4444',      t:'Weak' },
+                { w:'50%',  bg:'#f97316',      t:'Fair' },
+                { w:'75%',  bg:'#eab308',      t:'Good' },
+                { w:'100%', bg:'#22c55e',      t:'Strong 💪' },
+            ][score];
+
+            fill.style.width      = cfg.w;
+            fill.style.background = cfg.bg;
+            label.textContent     = cfg.t;
+        }
+
+        // Form submit
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn   = document.getElementById('submitBtn');
+            const errD  = document.getElementById('errorMsg');
+            const errT  = document.getElementById('errorText');
+            const succD = document.getElementById('successMsg');
+
+            const password = document.getElementById('password').value;
+            const confirm  = document.getElementById('confirm').value;
+            errD.classList.remove('show');
+
+            if (password !== confirm) {
+                errT.textContent = 'Passwords do not match.';
+                errD.classList.add('show');
+                return;
+            }
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating account…';
+            btn.disabled  = true;
+
+            try {
+                const res  = await fetch('http://localhost:3000/api/register', {
+                    method:  'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body:    JSON.stringify({
+                        username: document.getElementById('username').value.trim(),
+                        email:    document.getElementById('email').value.trim(),
+                        password,
+                        discord:  document.getElementById('discord').value.trim(),
+                    }),
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    document.getElementById('signupForm').style.display = 'none';
+                    succD.classList.add('show');
+                    setTimeout(() => window.location.href = 'login.html', 2000);
+                } else {
+                    throw new Error(data.error || 'Registration failed');
+                }
+            } catch (err) {
+                errT.textContent = err.message;
+                errD.classList.add('show');
+                btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Create Account';
+                btn.disabled  = false;
+            }
+        });
+    </script>
+</body>
+</html>

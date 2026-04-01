@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SicKloT | Contact Us</title>
+    <meta name="description" content="Get in touch with SicKloT — join our Discord or send us a message to get started.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .page-hero {
+            padding: 160px 0 80px;
+            position: relative; text-align: center; overflow: hidden;
+        }
+        .page-hero::before {
+            content: '';
+            position: absolute; top: -5%; left: 50%;
+            width: 900px; height: 600px;
+            background: radial-gradient(ellipse, rgba(0,85,255,0.12) 0%, transparent 65%);
+            transform: translateX(-50%); pointer-events: none;
+        }
+        .page-hero h1 { font-size: 3.8rem; letter-spacing: -1.5px; margin-bottom: 18px; }
+        .page-hero p { color: var(--text-muted); font-size: 1.15rem; max-width: 580px; margin: 0 auto; }
+
+        /* Discord CTA Banner */
+        .discord-banner {
+            border-radius: 20px;
+            padding: 50px 40px;
+            background: linear-gradient(135deg, rgba(88,101,242,0.15), rgba(0,85,255,0.08));
+            border: 1px solid rgba(88,101,242,0.3);
+            display: flex; align-items: center; justify-content: space-between; gap: 32px;
+            flex-wrap: wrap;
+            position: relative; overflow: hidden;
+        }
+        .discord-banner::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, #5865f2, var(--blue-glow));
+        }
+        .discord-banner-text h2 { font-size: 2.2rem; margin-bottom: 10px; }
+        .discord-banner-text p { color: var(--text-muted); margin: 0; font-size: 1rem; }
+        .discord-banner-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+
+        /* Contact Grid */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.4fr;
+            gap: 48px; margin-top: 80px;
+        }
+
+        /* Info Cards */
+        .contact-info { display: flex; flex-direction: column; gap: 20px; }
+        .info-card {
+            padding: 28px 24px;
+            border-radius: 16px; border: 1px solid var(--border-subtle);
+            background: var(--bg-card); backdrop-filter: blur(12px);
+            display: flex; align-items: flex-start; gap: 18px;
+            transition: var(--transition);
+        }
+        .info-card:hover { border-color: var(--blue-base); transform: translateX(4px); }
+        .info-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            background: rgba(0,85,255,0.1); border: 1px solid rgba(0,132,255,0.25);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; color: var(--blue-glow); flex-shrink: 0;
+        }
+        .info-content h4 { color: var(--text-pure); font-size: 1rem; margin-bottom: 6px; }
+        .info-content p { color: var(--text-muted); font-size: 0.9rem; margin: 0; line-height: 1.6; }
+        .info-content a { color: var(--blue-glow); transition: var(--transition); }
+        .info-content a:hover { color: var(--text-pure); }
+
+        /* Contact Form */
+        .contact-form-card {
+            border-radius: 20px; border: 1px solid var(--border-subtle);
+            background: var(--bg-card); backdrop-filter: blur(16px);
+            padding: 44px 40px; position: relative; overflow: hidden;
+        }
+        .contact-form-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--blue-base), var(--blue-glow));
+        }
+        .contact-form-card h3 { font-size: 1.6rem; margin-bottom: 8px; }
+        .contact-form-card > p { color: var(--text-muted); font-size: 0.93rem; margin-bottom: 32px; }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+        .form-group label { font-size: 0.88rem; font-weight: 600; color: var(--text-dark); }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+            background: rgba(255,255,255,0.04);
+            color: var(--text-pure);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.93rem;
+            transition: var(--transition);
+            outline: none;
+            resize: none;
+        }
+        .form-group input::placeholder,
+        .form-group textarea::placeholder { color: var(--text-muted); }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--blue-base);
+            box-shadow: 0 0 0 3px rgba(0,85,255,0.15);
+            background: rgba(0,85,255,0.04);
+        }
+        .form-group select option { background: #0a0b10; color: var(--text-pure); }
+        .form-submit {
+            width: 100%; padding: 15px;
+            border-radius: 10px; border: none;
+            background: linear-gradient(135deg, var(--blue-glow), var(--blue-base));
+            color: #000; font-family: 'Inter', sans-serif;
+            font-size: 1rem; font-weight: 700; cursor: pointer;
+            transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .form-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,85,255,0.5); filter: brightness(1.1); }
+
+        /* Success message */
+        .form-success {
+            display: none; text-align: center; padding: 40px 20px;
+        }
+        .form-success .success-icon {
+            font-size: 3.5rem; color: var(--blue-glow);
+            margin-bottom: 16px; display: block;
+        }
+        .form-success h3 { font-size: 1.6rem; margin-bottom: 10px; }
+        .form-success p { color: var(--text-muted); }
+
+        /* Social Links Section */
+        .socials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px; margin-top: 56px;
+        }
+        .social-card {
+            padding: 30px 24px; border-radius: 14px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card); backdrop-filter: blur(12px);
+            text-align: center; transition: var(--transition);
+            cursor: pointer;
+        }
+        .social-card:hover { transform: translateY(-5px); border-color: var(--blue-base); box-shadow: var(--glow-shadow); }
+        .social-card i { font-size: 2.2rem; margin-bottom: 14px; display: block; }
+        .social-card h4 { font-size: 1rem; margin-bottom: 6px; }
+        .social-card p { color: var(--text-muted); font-size: 0.85rem; margin: 0; }
+        .social-card.discord i { color: #5865f2; }
+        .social-card.discord i { color: #5865f2; }
+        .social-card.github i { color: #e6edf3; }
+        .social-card.youtube i { color: #ff0000; }
+
+        @media (max-width: 900px) {
+            .page-hero h1 { font-size: 2.8rem; }
+            .discord-banner { justify-content: center; text-align: center; }
+            .contact-grid { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 600px) {
+            .page-hero h1 { font-size: 2.2rem; }
+            .contact-form-card { padding: 30px 22px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="container nav-container">
+            <a href="index.html" class="logo"><i class="fa-solid fa-cube"></i> SicKloT</a>
+            <ul class="nav-links">
+                <li><a href="info.html">Info</a></li>
+                <li><a href="feature.html">Features</a></li>
+                <li><a href="plans.html">Plans</a></li>
+                <li><a href="contact.html" style="color:#fff;">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="#" class="btn btn-outline"><i class="fa-regular fa-user"></i> Client Area</a>
+                <a href="https://discord.gg/YWmDpp5q3M" target="_blank" class="btn btn-primary"><i class="fa-brands fa-discord"></i> Discord</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="page-hero">
+        <div class="container">
+            <div class="badge"><i class="fa-solid fa-paper-plane"></i> Get In Touch</div>
+            <h1>We're Always <span class="text-gradient">Here to Help</span></h1>
+            <p>Whether you're starting a new project or need support — our team is ready and waiting in Discord.</p>
+        </div>
+    </header>
+
+    <!-- Discord Banner -->
+    <section class="section" style="padding-top:0;">
+        <div class="container">
+            <div class="discord-banner">
+                <div class="discord-banner-text">
+                    <h2><i class="fa-brands fa-discord" style="color:#5865f2;margin-right:12px;"></i> Fastest Way to Reach Us</h2>
+                    <p>Our team lives in Discord. Join the server and open a ticket — we typically respond in under 2 hours.</p>
+                </div>
+                <div class="discord-banner-actions">
+                    <a href="https://discord.gg/YWmDpp5q3M" target="_blank" class="btn btn-primary" style="padding:14px 32px;font-size:1rem;background:linear-gradient(135deg,#7289da,#5865f2);box-shadow:0 4px 20px rgba(88,101,242,0.4);">
+                        <i class="fa-brands fa-discord"></i> Join Our Discord
+                    </a>
+                    <a href="plans.html" class="btn btn-outline" style="padding:14px 32px;font-size:1rem;">
+                        <i class="fa-solid fa-tags"></i> View Plans
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Grid -->
+    <section class="section" style="padding-top:0;">
+        <div class="container">
+            <div class="contact-grid">
+
+                <!-- Info Column -->
+                <div class="contact-info">
+                    <div class="info-card">
+                        <div class="info-icon"><i class="fa-brands fa-discord"></i></div>
+                        <div class="info-content">
+                            <h4>Discord Server</h4>
+                            <p>Primary support channel. Join and open a ticket for any project inquiry or support request.</p>
+                            <a href="https://discord.gg/YWmDpp5q3M" target="_blank">discord.gg/YWmDpp5q3M <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.8rem;"></i></a>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon"><i class="fa-solid fa-clock"></i></div>
+                        <div class="info-content">
+                            <h4>Response Time</h4>
+                            <p>We aim to respond to all Discord tickets within <strong style="color:var(--text-pure);">2 hours</strong>. Complex project quotes usually delivered within 24 hours.</p>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon"><i class="fa-solid fa-headset"></i></div>
+                        <div class="info-content">
+                            <h4>Support Hours</h4>
+                            <p>Our support team is active <strong style="color:var(--text-pure);">24/7</strong>. Critical issues are handled around the clock with zero delays.</p>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon"><i class="fa-solid fa-ticket"></i></div>
+                        <div class="info-content">
+                            <h4>Ticket Categories</h4>
+                            <p>We handle: Bot Development, Minecraft Setup, Hosting, Security Incidents, Billing, and General Inquiries.</p>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon"><i class="fa-solid fa-globe"></i></div>
+                        <div class="info-content">
+                            <h4>Worldwide Service</h4>
+                            <p>We serve communities globally. No matter your timezone, SicKloT has you covered.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Column -->
+                <div class="contact-form-card">
+                    <h3>Send Us a <span class="text-gradient">Message</span></h3>
+                    <p>Fill out the form and we'll follow up in Discord or by email.</p>
+
+                    <form id="contactForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="fname">First Name</label>
+                                <input type="text" id="fname" placeholder="John" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lname">Last Name</label>
+                                <input type="text" id="lname" placeholder="Doe">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" placeholder="john@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="discord">Discord Username (optional)</label>
+                            <input type="text" id="discord" placeholder="username#0000 or @username">
+                        </div>
+                        <div class="form-group">
+                            <label for="service">Service Interested In</label>
+                            <select id="service" required>
+                                <option value="" disabled selected>Select a service…</option>
+                                <option value="bot">Custom Discord Bot</option>
+                                <option value="mc">Minecraft Network Setup</option>
+                                <option value="hosting">Hosting Plan</option>
+                                <option value="security">Security &amp; Anti-Nuke</option>
+                                <option value="web">Web Integration / Dashboard</option>
+                                <option value="other">Other / General Inquiry</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Your Message</label>
+                            <textarea id="message" rows="5" placeholder="Tell us about your project, community size, and what you need built…" required></textarea>
+                        </div>
+                        <button type="submit" class="form-submit">
+                            <i class="fa-solid fa-paper-plane"></i> Send Message
+                        </button>
+                    </form>
+
+                    <div class="form-success" id="formSuccess">
+                        <i class="fa-solid fa-circle-check success-icon"></i>
+                        <h3>Message Sent!</h3>
+                        <p>Thanks for reaching out. We'll be in touch shortly — or jump into Discord for a faster response!</p>
+                        <a href="https://discord.gg/YWmDpp5q3M" target="_blank" class="btn btn-primary" style="display:inline-flex;margin-top:20px;gap:8px;align-items:center;"><i class="fa-brands fa-discord"></i> Join Discord</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Links -->
+    <section class="section" style="background:linear-gradient(180deg,var(--bg-surface),var(--bg-base));border-top:1px solid var(--border-subtle);">
+        <div class="container">
+            <div class="section-header">
+                <h2>Find Us <span class="text-gradient">Everywhere</span></h2>
+                <p>Follow SicKloT across platforms to stay updated on releases, announcements, and community events.</p>
+            </div>
+            <div class="socials-grid" style="grid-template-columns:1fr;max-width:480px;margin:0 auto;">
+                <a href="https://discord.gg/YWmDpp5q3M" target="_blank" class="social-card discord" style="text-decoration:none;">
+                    <i class="fa-brands fa-discord"></i>
+                    <h4>Discord</h4>
+                    <p>Primary community hub &amp; support server — join to chat, open a ticket, or stay updated on releases</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo"><i class="fa-solid fa-cube"></i> SicKloT</div>
+                    <p>A dedicated development group delivering custom Discord bots, server setups, and Minecraft solutions worldwide.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Pages</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="info.html">About</a></li>
+                        <li><a href="feature.html">Features</a></li>
+                        <li><a href="plans.html">Plans</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="info.html">About Us</a></li>
+                        <li><a href="#">Data Centers</a></li>
+                        <li><a href="contact.html">Support</a></li>
+                        <li><a href="#">Status Page</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Acceptable Use</a></li>
+                        <li><a href="#">Refund Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="copy">&copy; 2026 SicKloT Hosting &amp; Development. All rights reserved.</div>
+                <div class="social-links">
+                    <a href="https://discord.gg/YWmDpp5q3M" target="_blank"><i class="fa-brands fa-discord"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        const form        = document.getElementById('contactForm');
+        const successBox  = document.getElementById('formSuccess');
+        const submitBtn   = form.querySelector('.form-submit');
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Collect form data
+            const payload = {
+                firstName : document.getElementById('fname').value.trim(),
+                lastName  : document.getElementById('lname').value.trim(),
+                email     : document.getElementById('email').value.trim(),
+                discord   : document.getElementById('discord').value.trim(),
+                service   : document.getElementById('service').value,
+                message   : document.getElementById('message').value.trim(),
+            };
+
+            // Show loading state on button
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending…';
+            submitBtn.disabled  = true;
+
+            try {
+                const res  = await fetch('http://localhost:3000/submit-contact', {
+                    method  : 'POST',
+                    headers : { 'Content-Type': 'application/json' },
+                    body    : JSON.stringify(payload),
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    // ✅ Success — show thank-you panel
+                    form.style.display    = 'none';
+                    successBox.style.display = 'block';
+                } else {
+                    throw new Error(data.error || 'Server error');
+                }
+
+            } catch (err) {
+                // ❌ Server not running or network issue — still show success for UX
+                // but also show a notice
+                console.warn('Server offline or error:', err.message);
+                form.style.display    = 'none';
+                successBox.innerHTML  = `
+                    <i class="fa-solid fa-triangle-exclamation success-icon" style="color:#f59e0b;"></i>
+                    <h3>Message Received!</h3>
+                    <p style="color:var(--text-muted)">
+                        Your message was submitted, but the local save server isn't running right now.<br>
+                        <strong style="color:var(--text-pure)">To save messages, start the server:</strong><br><br>
+                        <code style="background:rgba(255,255,255,0.06);padding:6px 14px;border-radius:6px;font-size:0.9rem;">
+                            node server.js
+                        </code>
+                    </p>
+                    <a href="https://discord.gg/YWmDpp5q3M" target="_blank"
+                       class="btn btn-primary"
+                       style="display:inline-flex;margin-top:24px;gap:8px;align-items:center;">
+                        <i class="fa-brands fa-discord"></i> Join Discord Instead
+                    </a>`;
+                successBox.style.display = 'block';
+            }
+        });
+    </script>
+
+</body>
+</html>

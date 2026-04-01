@@ -1,0 +1,15 @@
+{
+  "name": "siklot-website",
+  "version": "3.0.0",
+  "description": "SicKloT Website with Google Sheets database",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "googleapis": "^140.0.0"
+  }
+}

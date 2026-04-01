@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SicKloT | Plans &amp; Pricing</title>
+    <meta name="description" content="Browse SicKloT hosting and development plans — flexible pricing for every community size.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .page-hero {
+            padding: 160px 0 80px;
+            position: relative; text-align: center; overflow: hidden;
+        }
+        .page-hero::before {
+            content: '';
+            position: absolute; top: -5%; left: 50%;
+            width: 900px; height: 600px;
+            background: radial-gradient(ellipse, rgba(0,85,255,0.12) 0%, transparent 65%);
+            transform: translateX(-50%); pointer-events: none;
+        }
+        .page-hero h1 { font-size: 3.8rem; letter-spacing: -1.5px; margin-bottom: 18px; }
+        .page-hero p { color: var(--text-muted); font-size: 1.15rem; max-width: 580px; margin: 0 auto; }
+
+        /* Toggle */
+        .billing-toggle {
+            display: flex; align-items: center; justify-content: center;
+            gap: 14px; margin: 50px 0 20px;
+        }
+        .billing-toggle span { color: var(--text-muted); font-size: 0.95rem; font-weight: 500; }
+        .billing-toggle span.active { color: var(--text-pure); }
+        .toggle-switch {
+            width: 52px; height: 28px; border-radius: 14px;
+            background: linear-gradient(135deg, var(--blue-glow), var(--blue-base));
+            position: relative; cursor: pointer; transition: var(--transition);
+        }
+        .toggle-switch::after {
+            content: '';
+            position: absolute; top: 4px; left: 4px;
+            width: 20px; height: 20px; border-radius: 50%;
+            background: #fff; transition: var(--transition);
+        }
+        .toggle-switch.annual::after { left: 28px; }
+        .save-badge {
+            background: rgba(0,210,255,0.12); border: 1px solid rgba(0,210,255,0.3);
+            color: var(--blue-glow); font-size: 0.75rem; font-weight: 700;
+            padding: 3px 10px; border-radius: 20px;
+        }
+
+        /* Category Label */
+        .plan-category {
+            display: flex; align-items: center; gap: 12px;
+            margin: 70px 0 30px;
+        }
+        .plan-category h2 { font-size: 1.8rem; margin: 0; }
+        .plan-category .line {
+            flex: 1; height: 1px;
+            background: linear-gradient(90deg, var(--border-subtle), transparent);
+        }
+
+        /* Extended pricing card */
+        .plan-card {
+            padding: 36px 28px;
+            border-radius: 16px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            display: flex; flex-direction: column;
+            position: relative; overflow: hidden;
+            transition: var(--transition);
+        }
+        .plan-card:hover { transform: translateY(-5px); border-color: var(--blue-base); box-shadow: var(--glow-shadow); }
+        .plan-card.featured {
+            border-color: var(--blue-base);
+            box-shadow: var(--glow-shadow);
+            transform: scale(1.02);
+        }
+        .plan-card.featured::before {
+            content: '';
+            position: absolute; top:0; left:0; right:0; height:3px;
+            background: linear-gradient(90deg, var(--blue-base), var(--blue-glow));
+        }
+        .featured-badge {
+            position: absolute; top: -12px; left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--blue-glow), var(--blue-base));
+            color: #000; font-size: 0.75rem; font-weight: 800;
+            text-transform: uppercase; padding: 4px 16px; border-radius: 20px;
+            white-space: nowrap;
+        }
+        .plan-icon {
+            width: 54px; height: 54px; border-radius: 14px;
+            background: rgba(0,85,255,0.1); border: 1px solid rgba(0,132,255,0.25);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; color: var(--blue-glow); margin-bottom: 18px;
+        }
+        .plan-name { font-size: 1.3rem; font-family: 'Outfit',sans-serif; font-weight: 700; margin-bottom: 8px; color: var(--text-pure); }
+        .plan-desc { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 22px; line-height: 1.6; }
+        .plan-price {
+            font-family: 'Outfit', sans-serif; font-size: 3rem; font-weight: 800;
+            color: var(--text-pure); line-height: 1;
+        }
+        .plan-price .currency { font-size: 1.4rem; vertical-align: top; margin-top: 8px; display: inline-block; color: var(--text-muted); }
+        .plan-price .period { font-size: 1rem; color: var(--text-muted); font-weight: 500; }
+        .plan-price-row { margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--border-subtle); }
+        .plan-features { list-style:none; padding:0; margin:0; flex-grow:1; display:flex; flex-direction:column; gap:11px; }
+        .plan-features li { display:flex; align-items:flex-start; gap:10px; font-size:0.92rem; color:var(--text-dark); }
+        .plan-features li i { color:var(--blue-glow); margin-top:2px; flex-shrink:0; }
+        .plan-features li.dim { opacity: 0.4; }
+        .plan-features li.dim i { color: var(--text-muted); }
+        .plan-btn {
+            margin-top: 24px; display: block; width: 100%; padding: 13px;
+            text-align: center; border-radius: 10px; font-weight: 700;
+            font-size: 0.95rem; font-family:'Inter',sans-serif; box-sizing:border-box;
+            transition: var(--transition); cursor: pointer;
+        }
+
+        /* Plans grids */
+        .plans-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:24px; }
+
+        /* FAQ */
+        .faq-list { display:flex; flex-direction:column; gap:16px; margin-top:56px; }
+        .faq-item {
+            border:1px solid var(--border-subtle);
+            border-radius:12px; overflow:hidden;
+            background:var(--bg-card); backdrop-filter:blur(12px);
+        }
+        .faq-q {
+            padding:20px 24px; display:flex; justify-content:space-between; align-items:center;
+            cursor:pointer; font-weight:600; color:var(--text-pure); font-size:0.98rem;
+            transition:var(--transition);
+        }
+        .faq-q:hover { color:var(--blue-glow); }
+        .faq-q i { color:var(--blue-glow); transition:var(--transition); flex-shrink:0; }
+        .faq-a {
+            max-height:0; overflow:hidden; transition:max-height 0.4s ease, padding 0.3s;
+            color:var(--text-muted); font-size:0.93rem; line-height:1.75;
+            padding:0 24px;
+        }
+        .faq-item.open .faq-a { max-height:200px; padding:0 24px 20px; }
+        .faq-item.open .faq-q i { transform:rotate(180deg); }
+
+        @media (max-width:900px) { .page-hero h1 { font-size:2.8rem; } }
+        @media (max-width:600px) { .page-hero h1 { font-size:2.2rem; } .plans-grid { grid-template-columns:1fr; } }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="container nav-container">
+            <a href="index.html" class="logo"><i class="fa-solid fa-cube"></i> SicKloT</a>
+            <ul class="nav-links">
+                <li><a href="info.html">Info</a></li>
+                <li><a href="feature.html">Features</a></li>
+                <li><a href="plans.html" style="color:#fff;">Plans</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="#" class="btn btn-outline"><i class="fa-regular fa-user"></i> Client Area</a>
+                <a href="https://discord.gg/YWmDpp5q3M" target="_blank" class="btn btn-primary"><i class="fa-brands fa-discord"></i> Discord</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="page-hero">
+        <div class="container">
+            <div class="badge"><i class="fa-solid fa-tags"></i> Flexible Pricing</div>
+            <h1>Plans That Fit <span class="text-gradient">Every Community</span></h1>
+            <p>Transparent pricing. No hidden fees. No lock-ins. Pick the plan that matches your needs and upgrade anytime.</p>
+            <div class="billing-toggle" id="billingToggle">
+                <span class="active" id="monthlyLabel">Monthly</span>
+                <div class="toggle-switch" id="toggleSwitch"></div>
+                <span id="annualLabel">Annual</span>
+                <span class="save-badge">Save 20%</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Minecraft Hosting Plans -->
+    <section class="section" style="padding-top:20px;">
+        <div class="container">
+
+            <div class="plan-category">
+                <div class="plan-icon" style="margin:0;"><i class="fa-solid fa-gamepad"></i></div>
+                <h2>Minecraft <span class="text-gradient">Hosting</span></h2>
+                <div class="line"></div>
+            </div>
+            <div class="plans-grid">
+
+                <div class="plan-card">
+                    <div class="plan-icon"><i class="fa-solid fa-seedling"></i></div>
+                    <div class="plan-name">Starter</div>
+                    <div class="plan-desc">Perfect for small survival or creative servers just getting started.</div>
+                    <div class="plan-price-row">
+                        <div class="plan-price"><span class="currency">$</span><span class="amount" data-monthly="4" data-annual="3">4</span><span class="period">/mo</span></div>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fa-solid fa-check"></i> 4 GB RAM</li>
+                        <li><i class="fa-solid fa-check"></i> 20 Player Slots</li>
+                        <li><i class="fa-solid fa-check"></i> 15 GB NVMe SSD</li>
+                        <li><i class="fa-solid fa-check"></i> DDoS Protection</li>
+                        <li><i class="fa-solid fa-check"></i> Daily Backups</li>
+                        <li class="dim"><i class="fa-solid fa-xmark"></i> Custom Domain</li>
+                        <li class="dim"><i class="fa-solid fa-xmark"></i> MySQL Database</li>
+                    </ul>
+                    <a href="https://discord.gg/YWmDpp5q3M" target="_blank" class="plan-btn btn btn-outline">Get Started</a>
+                </div>
+
+                <div class="plan-card featured">
+                    <div class="featured-badge"><i class="fa-solid fa-fire"></i> Most Popular</div>
+                    <div class="plan-icon"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="plan-name">Pro</div>
+                    <div class="plan-desc">The sweet spot for active communities and growing networks.</div>
+                    <div class="plan-price-row">
+                        <div class="plan-price"><span class="currency">$</span><span class="amount" data-monthly="9" data-annual="7">9</span><span class="period">/mo</span></div>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fa-solid fa-check"></i> 10 GB RAM</li>
+                        <li><i class="fa-solid fa-check"></i> 60 Player Slots</li>
+                        <li><i class="fa-solid fa-check"></i> 40 GB NVMe SSD</li>
+                        <li><i class="fa-solid fa-check"></i> DDoS Protection</li>
+                        <li><i class="fa-solid fa-check"></i> Daily Backups</li>
+                        <li><i class="fa-solid fa-check"></i> Custom Domain</li>
+                        <li><i class="fa-solid fa-check"></i> MySQL Database</li>
+                    </ul>
+                    <a href="https://discord.gg/YWmDpp5q3M" target="_blank" class="plan-btn btn btn-primary">Get Started</a>
+                </div>
+
+                <div class="plan-card">
+                    <div class="plan-icon"><i class="fa-solid fa-network-wired"></i></div>
+                    <div class="plan-name">Network</div>
+                    <div class="plan-desc">Full multi-server proxy network for serious gaming communities.</div>
+                    <div class="plan-price-row">
+                        <div class="plan-price"><span class="currency">$</span><span class="amount" data-monthly="19" data-annual="15">19</span><span class="period">/mo</span></div>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fa-solid fa-check"></i> 24 GB RAM</li>
+                        <li><i class="fa-solid fa-check"></i> Unlimited Slots</li>
+                        <li><i class="fa-solid fa-check"></i> 80 GB NVMe SSD</li>
+                        <li><i class="fa-solid fa-check"></i> Enterprise DDoS</li>
+                        <li><i class="fa-solid fa-check"></i> Hourly Backups</li>
+                        <li><i class="fa-solid fa-check"></i> Custom Domain</li>
+                        <li><i class="fa-solid fa-check"></i> MySQL + MongoDB</li>
+                    </ul>
+                    <a href="https://discord.gg/YWmDpp5q3M" target="_blank" class="plan-btn btn btn-outline">Get Started</a>
+                </div>
+
+            </div>
+
+            <!-- Discord Bot Hosting -->
+            <div class="plan-category" style="margin-top:80px;">
+                <div class="plan-icon" style="margin:0;"><i class="fa-brands fa-discord"></i></div>
+                <h2>Discord Bot <span class="text-gradient">Hosting</span></h2>
+                <div class="line"></div>
+            </div>
+            <div class="plans-grid">
+
+                <div class="plan-card">
+                    <div class="plan-icon"><i class="fa-solid fa-robot"></i></div>
+                    <div class="plan-name">Basic Bot</div>
+                    <div class="plan-desc">Host your existing Discord bot reliably on our infrastructure.</div>
+                    <div class="plan-price-row">
+                        <div class="plan-price"><span class="currency">$</span><span class="amount" data-monthly="3" data-annual="2">3</span><span class="period">/mo</span></div>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fa-solid fa-check"></i> 512 MB RAM</li>
+                        <li><i class="fa-solid fa-check"></i> 5 GB SSD</li>
+                        <li><i class="fa-solid fa-check"></i> Node.js / Python</li>
+                        <li><i class="fa-solid fa-check"></i> 99.9% Uptime</li>
+                        <li class="dim"><i class="fa-solid fa-xmark"></i> Database Included</li>
+                    </ul>
+                    <a href="https://discord.gg/YWmDpp5q3M" target="_blank" class="plan-btn btn btn-outline">Get Started</a>
+                </div>
+
+                <div class="plan-card featured">
+                    <div class="featured-badge"><i class="fa-solid fa-fire"></i> Most Popular</div>
+                    <div class="plan-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                    <div class="plan-name">Pro Bot</div>
+                    <div class="plan-desc">Everything your serious production bot needs to run flawlessly.</div>
+                    <div class="plan-price-row">
+                        <div class="plan-price"><span class="currency">$</span><span class="amount" data-monthly="7" data-annual="6">7</span><span class="period">/mo</span></div>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fa-solid fa-check"></i> 2 GB RAM</li>
+                        <li><i class="fa-solid fa-check"></i> 20 GB NVMe SSD</li>
+                        <li><i class="fa-solid fa-check"></i> Node.js / Python</li>
+                        <li><i class="fa-solid fa-check"></i> 99.9% Uptime</li>
+                        <li><i class="fa-solid fa-check"></i> MongoDB Included</li>
+                    </ul>
+                    <a href="https://discord.gg/YWmDpp5q3M" target="_blank" class="plan-btn btn btn-primary">Get Started</a>
+                </div>
+
+                <div class="plan-card">
+                    <div class="plan-icon"><i class="fa-solid fa-layer-group"></i></div>
+                    <div class="plan-name">Multi-Bot</div>
+                    <div class="plan-desc">Host multiple bots under one plan with shared resources.</div>
+                    <div class="plan-price-row">
+                        <div class="plan-price"><span class="currency">$</span><span class="amount" data-monthly="14" data-annual="11">14</span><span class="period">/mo</span></div>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fa-solid fa-check"></i> 8 GB RAM</li>
+                        <li><i class="fa-solid fa-check"></i> 50 GB NVMe SSD</li>
+                        <li><i class="fa-solid fa-check"></i> Up to 5 Bot Instances</li>
+                        <li><i class="fa-solid fa-check"></i> 99.9% Uptime</li>
+                        <li><i class="fa-solid fa-check"></i> MongoDB + MySQL</li>
+                    </ul>
+                    <a href="https://discord.gg/YWmDpp5q3M" target="_blank" class="plan-btn btn btn-outline">Get Started</a>
+                </div>
+
+            </div>
+
+            <!-- Development Services -->
+            <div class="plan-category" style="margin-top:80px;">
+                <div class="plan-icon" style="margin:0;"><i class="fa-solid fa-code"></i></div>
+                <h2>Development <span class="text-gradient">Services</span></h2>
+                <div class="line"></div>
+            </div>
+            <div class="plans-grid">
+
+                <div class="plan-card">
+                    <div class="plan-icon"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                    <div class="plan-name">Starter Dev</div>
+                    <div class="plan-desc">Simple bot or Discord server setup for smaller communities.</div>
+                    <div class="plan-price-row">
+                        <div class="plan-price" style="font-size:2rem;">Custom</div>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fa-solid fa-check"></i> 1 Bot or Server Setup</li>
+                        <li><i class="fa-solid fa-check"></i> Up to 10 Custom Commands</li>
+                        <li><i class="fa-solid fa-check"></i> 7-Day Delivery</li>
+                        <li><i class="fa-solid fa-check"></i> 14-Day Post-Launch Support</li>
+                        <li class="dim"><i class="fa-solid fa-xmark"></i> Web Dashboard</li>
+                    </ul>
+                    <a href="contact.html" class="plan-btn btn btn-outline">Get Quote</a>
+                </div>
+
+                <div class="plan-card featured">
+                    <div class="featured-badge"><i class="fa-solid fa-crown"></i> Best Value</div>
+                    <div class="plan-icon"><i class="fa-solid fa-gem"></i></div>
+                    <div class="plan-name">Full Package</div>
+                    <div class="plan-desc">Complete ecosystem — bot, server layout, hosting, and web integration.</div>
+                    <div class="plan-price-row">
+                        <div class="plan-price" style="font-size:2rem;">Custom</div>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fa-solid fa-check"></i> Custom Bot (Unlimited Commands)</li>
+                        <li><i class="fa-solid fa-check"></i> Full Discord Architecture</li>
+                        <li><i class="fa-solid fa-check"></i> Minecraft Network Setup</li>
+                        <li><i class="fa-solid fa-check"></i> Web Dashboard</li>
+                        <li><i class="fa-solid fa-check"></i> 30-Day Support</li>
+                    </ul>
+                    <a href="contact.html" class="plan-btn btn btn-primary">Get Quote</a>
+                </div>
+
+                <div class="plan-card">
+                    <div class="plan-icon"><i class="fa-solid fa-infinity"></i></div>
+                    <div class="plan-name">Retainer</div>
+                    <div class="plan-desc">Ongoing development partnership with monthly hours allocation.</div>
+                    <div class="plan-price-row">
+                        <div class="plan-price" style="font-size:2rem;">Custom</div>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fa-solid fa-check"></i> Monthly Dev Hours</li>
+                        <li><i class="fa-solid fa-check"></i> Priority Response</li>
+                        <li><i class="fa-solid fa-check"></i> Continuous Updates</li>
+                        <li><i class="fa-solid fa-check"></i> Bug Fixes Included</li>
+                        <li><i class="fa-solid fa-check"></i> Feature Roadmap Planning</li>
+                    </ul>
+                    <a href="contact.html" class="plan-btn btn btn-outline">Get Quote</a>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section" style="background:linear-gradient(180deg,var(--bg-surface),var(--bg-base));border-top:1px solid var(--border-subtle);">
+        <div class="container">
+            <div class="section-header">
+                <h2>Frequently Asked <span class="text-gradient">Questions</span></h2>
+                <p>Everything you need to know about our plans and services.</p>
+            </div>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-q">How do I get started? <i class="fa-solid fa-chevron-down"></i></div>
+                    <div class="faq-a">Join our Discord server and open a ticket. Our team will respond within hours, discuss your needs, and guide you through the process from start to finish.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">Can I upgrade my plan later? <i class="fa-solid fa-chevron-down"></i></div>
+                    <div class="faq-a">Absolutely. You can upgrade or downgrade your hosting plan at any time. We'll prorate the remaining balance and apply it to your new plan.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">What payment methods do you accept? <i class="fa-solid fa-chevron-down"></i></div>
+                    <div class="faq-a">We currently accept PayPal and major credit/debit cards. Crypto payments are available on request for development services.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">Do development quotes include hosting? <i class="fa-solid fa-chevron-down"></i></div>
+                    <div class="faq-a">Development services are priced separately from hosting. However, we offer bundled discounts when you combine a development package with a hosting plan.</div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">Is there a money-back guarantee? <i class="fa-solid fa-chevron-down"></i></div>
+                    <div class="faq-a">Yes. All hosting plans come with a 7-day money-back guarantee. Development projects are handled with a milestone-based refund policy — see our Terms of Service for details.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section" style="text-align:center;">
+        <div class="container">
+            <h2 style="font-size:2.6rem;letter-spacing:-1px;margin-bottom:16px;">Still Have <span class="text-gradient">Questions?</span></h2>
+            <p style="color:var(--text-muted);max-width:500px;margin:0 auto 36px;">Our team is live in Discord. Drop a message and we'll help you choose the right plan.</p>
+            <a href="https://discord.gg/YWmDpp5q3M" target="_blank" class="btn btn-primary" style="padding:16px 40px;font-size:1.05rem;"><i class="fa-brands fa-discord"></i> Open a Ticket</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo"><i class="fa-solid fa-cube"></i> SicKloT</div>
+                    <p>A dedicated development group delivering custom Discord bots, server setups, and Minecraft solutions worldwide.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Pages</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="info.html">About</a></li>
+                        <li><a href="feature.html">Features</a></li>
+                        <li><a href="plans.html">Plans</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="info.html">About Us</a></li>
+                        <li><a href="#">Data Centers</a></li>
+                        <li><a href="contact.html">Support</a></li>
+                        <li><a href="#">Status Page</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Acceptable Use</a></li>
+                        <li><a href="#">Refund Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="copy">&copy; 2026 SicKloT Hosting &amp; Development. All rights reserved.</div>
+                <div class="social-links">
+                    <a href="https://discord.gg/YWmDpp5q3M" target="_blank"><i class="fa-brands fa-discord"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Billing toggle
+        const toggle = document.getElementById('toggleSwitch');
+        const amounts = document.querySelectorAll('.amount');
+        const monthlyLabel = document.getElementById('monthlyLabel');
+        const annualLabel = document.getElementById('annualLabel');
+        let isAnnual = false;
+
+        toggle.addEventListener('click', () => {
+            isAnnual = !isAnnual;
+            toggle.classList.toggle('annual', isAnnual);
+            monthlyLabel.classList.toggle('active', !isAnnual);
+            annualLabel.classList.toggle('active', isAnnual);
+            amounts.forEach(el => {
+                el.textContent = isAnnual ? el.dataset.annual : el.dataset.monthly;
+            });
+        });
+
+        // FAQ accordion
+        document.querySelectorAll('.faq-q').forEach(q => {
+            q.addEventListener('click', () => {
+                const item = q.parentElement;
+                const wasOpen = item.classList.contains('open');
+                document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+                if (!wasOpen) item.classList.add('open');
+            });
+        });
+    </script>
+</body>
+</html>

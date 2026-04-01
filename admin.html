@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SicKloT | Admin Panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg:       #050507;
+            --surface:  #0a0b10;
+            --sidebar:  #08090f;
+            --card:     rgba(14,16,26,0.85);
+            --blue:     #0055ff;
+            --glow:     #00d2ff;
+            --border:   rgba(255,255,255,0.07);
+            --muted:    #8b949e;
+            --text:     #cbd5e1;
+            --white:    #ffffff;
+            --tr:       all 0.25s cubic-bezier(0.25,0.8,0.25,1);
+            --red:      #ef4444;
+            --green:    #22c55e;
+        }
+        html, body { height: 100%; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow: hidden; }
+
+        /* ── Login Overlay ── */
+        #loginOverlay {
+            position: fixed; inset: 0; z-index: 1000;
+            background: var(--bg);
+            display: flex; align-items: center; justify-content: center;
+            padding: 24px;
+        }
+        #loginOverlay::before {
+            content:'';
+            position:absolute; width:600px; height:600px; border-radius:50%;
+            background: radial-gradient(circle, rgba(0,85,255,0.1) 0%, transparent 65%);
+            top:-100px; left:50%; transform:translateX(-50%);
+            pointer-events:none; animation: pulse 5s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%,100%{opacity:0.6;transform:translateX(-50%) scale(1)} 50%{opacity:1;transform:translateX(-50%) scale(1.1)} }
+        .login-card {
+            width:100%; max-width:400px;
+            background:var(--card); border:1px solid var(--border);
+            border-radius:20px; padding:44px 40px;
+            backdrop-filter:blur(20px); position:relative; overflow:hidden;
+            animation: fadeUp 0.4s ease both;
+        }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+        .login-card::before { content:''; position:absolute; top:0;left:0;right:0;height:3px; background:linear-gradient(90deg,var(--blue),var(--glow)); }
+        .lc-logo { font-family:'Outfit',sans-serif; font-size:1.4rem; font-weight:800; color:var(--white); display:flex;align-items:center;gap:10px; margin-bottom:28px; }
+        .lc-logo i { color: var(--glow); }
+        .lc-title { font-family:'Outfit',sans-serif; font-size:1.6rem; font-weight:800; color:var(--white); margin-bottom:6px; }
+        .lc-sub { color:var(--muted); font-size:0.88rem; margin-bottom:28px; }
+        .lc-group { margin-bottom:18px; }
+        .lc-group label { display:block; font-size:0.82rem; font-weight:600; color:var(--text); margin-bottom:7px; }
+        .lc-wrap { position:relative; }
+        .lc-wrap i { position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.88rem;pointer-events:none; }
+        .lc-wrap input {
+            width:100%; padding:12px 16px 12px 38px;
+            border-radius:10px; border:1px solid var(--border);
+            background:rgba(255,255,255,0.04);
+            color:var(--white); font-family:'Inter',sans-serif;
+            font-size:0.93rem; outline:none; transition:var(--tr);
+        }
+        .lc-wrap input:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(0,85,255,0.15); background:rgba(0,85,255,0.04); }
+        .lc-wrap input::placeholder { color:var(--muted); }
+        .lc-error { background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.25); color:#f87171; border-radius:8px; padding:9px 13px; font-size:0.85rem; margin-bottom:14px; display:none; align-items:center; gap:8px; }
+        .lc-error.show { display:flex; }
+        .lc-btn {
+            width:100%; padding:13px; border-radius:10px; border:none;
+            background:linear-gradient(135deg,var(--glow),var(--blue));
+            color:#000; font-family:'Inter',sans-serif; font-size:0.98rem;
+            font-weight:700; cursor:pointer; transition:var(--tr);
+            display:flex; align-items:center; justify-content:center; gap:10px;
+        }
+        .lc-btn:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,85,255,0.4); }
+        .lc-btn:disabled { opacity:0.6; pointer-events:none; }
+
+        /* ── Main Layout ── */
+        #app { display:flex; height:100vh; display:none; }
+
+        /* ── Sidebar ── */
+        .sidebar {
+            width: 240px; flex-shrink: 0;
+            background: var(--sidebar);
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column;
+            padding: 0;
+        }
+        .sb-logo {
+            padding: 24px 20px;
+            font-family:'Outfit',sans-serif; font-size:1.3rem; font-weight:800;
+            color:var(--white); display:flex; align-items:center; gap:10px;
+            border-bottom: 1px solid var(--border);
+        }
+        .sb-logo i { color:var(--glow); }
+        .sb-badge { font-size:0.65rem; font-weight:800; background:rgba(0,85,255,0.2); color:var(--glow); padding:2px 8px; border-radius:20px; border:1px solid rgba(0,132,255,0.3); }
+        .sb-nav { flex:1; padding: 16px 12px; }
+        .sb-section { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--muted); padding:0 8px; margin: 16px 0 8px; }
+        .sb-item {
+            display:flex; align-items:center; gap:12px;
+            padding:11px 12px; border-radius:10px;
+            color:var(--muted); font-size:0.9rem; font-weight:500;
+            cursor:pointer; transition:var(--tr); margin-bottom:2px;
+            position:relative;
+        }
+        .sb-item:hover { background:rgba(255,255,255,0.04); color:var(--white); }
+        .sb-item.active { background:rgba(0,85,255,0.12); color:var(--glow); border:1px solid rgba(0,132,255,0.2); }
+        .sb-item i { width:18px; text-align:center; }
+        .sb-count {
+            margin-left:auto; background:var(--blue); color:#fff;
+            font-size:0.68rem; font-weight:700;
+            padding:2px 7px; border-radius:20px; min-width:20px; text-align:center;
+        }
+        .sb-count.red { background: var(--red); }
+        .sb-footer {
+            padding:16px 12px;
+            border-top:1px solid var(--border);
+        }
+        .sb-user {
+            display:flex; align-items:center; gap:10px;
+            padding:10px 12px; border-radius:10px;
+            background:rgba(255,255,255,0.03);
+        }
+        .sb-avatar {
+            width:32px; height:32px; border-radius:50%;
+            background:linear-gradient(135deg,var(--glow),var(--blue));
+            display:flex; align-items:center; justify-content:center;
+            font-size:0.75rem; font-weight:800; color:#000; flex-shrink:0;
+        }
+        .sb-user-name { font-size:0.88rem; font-weight:600; color:var(--white); }
+        .sb-user-role { font-size:0.73rem; color:var(--muted); }
+        .sb-logout {
+            margin-left:auto; color:var(--muted); cursor:pointer;
+            transition:color 0.2s; font-size:0.85rem;
+        }
+        .sb-logout:hover { color:var(--red); }
+
+        /* ── Main Content ── */
+        .main { flex:1; overflow-y:auto; display:flex; flex-direction:column; }
+
+        /* Top bar */
+        .topbar {
+            padding:18px 28px;
+            border-bottom:1px solid var(--border);
+            display:flex; align-items:center; justify-content:space-between;
+            background:rgba(5,5,7,0.6); backdrop-filter:blur(12px);
+            position:sticky; top:0; z-index:10;
+        }
+        .topbar-left h2 { font-family:'Outfit',sans-serif; font-size:1.3rem; font-weight:800; color:var(--white); }
+        .topbar-left p  { font-size:0.82rem; color:var(--muted); margin-top:2px; }
+        .topbar-right { display:flex; align-items:center; gap:12px; }
+        .refresh-btn {
+            padding:8px 16px; border-radius:8px;
+            border:1px solid var(--border); background:transparent;
+            color:var(--muted); font-size:0.85rem; cursor:pointer;
+            font-family:'Inter',sans-serif; transition:var(--tr);
+            display:flex; align-items:center; gap:8px;
+        }
+        .refresh-btn:hover { border-color:var(--blue); color:var(--glow); }
+
+        /* Content pad */
+        .content { padding: 28px; flex:1; }
+
+        /* Stats row */
+        .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:28px; }
+        .stat-card {
+            padding:22px 20px; border-radius:14px;
+            border:1px solid var(--border); background:var(--card);
+            backdrop-filter:blur(12px); transition:var(--tr); position:relative; overflow:hidden;
+        }
+        .stat-card::before { content:''; position:absolute; top:0;left:0;right:0;height:2px; background:linear-gradient(90deg,var(--blue),var(--glow)); }
+        .stat-card:hover { border-color:var(--blue); transform:translateY(-3px); }
+        .stat-icon { font-size:1.4rem; margin-bottom:12px; }
+        .stat-num { font-family:'Outfit',sans-serif; font-size:2.2rem; font-weight:800; color:var(--white); line-height:1; }
+        .stat-label { color:var(--muted); font-size:0.8rem; margin-top:6px; }
+
+        /* Table section */
+        .table-section { margin-bottom:36px; }
+        .section-header {
+            display:flex; align-items:center; justify-content:space-between;
+            margin-bottom:16px; flex-wrap:wrap; gap:12px;
+        }
+        .section-title { font-family:'Outfit',sans-serif; font-size:1.2rem; font-weight:800; color:var(--white); display:flex;align-items:center;gap:10px; }
+        .section-title .dot { width:10px;height:10px;border-radius:50%; flex-shrink:0; }
+        .search-bar {
+            padding:9px 14px; border-radius:8px;
+            border:1px solid var(--border); background:rgba(255,255,255,0.03);
+            color:var(--white); font-family:'Inter',sans-serif; font-size:0.85rem;
+            outline:none; width:220px; transition:var(--tr);
+        }
+        .search-bar:focus { border-color:var(--blue); }
+        .search-bar::placeholder { color:var(--muted); }
+
+        /* Table */
+        .tbl-wrap { border-radius:14px; border:1px solid var(--border); overflow:hidden; }
+        table { width:100%; border-collapse:collapse; }
+        thead th {
+            padding:13px 16px; text-align:left;
+            font-size:0.75rem; font-weight:700; text-transform:uppercase;
+            letter-spacing:0.6px; color:var(--muted);
+            background:rgba(0,0,0,0.3);
+            border-bottom:1px solid var(--border);
+        }
+        tbody tr { transition:background 0.15s; border-bottom:1px solid var(--border); }
+        tbody tr:last-child { border-bottom:none; }
+        tbody tr:hover { background:rgba(0,85,255,0.04); }
+        tbody td { padding:14px 16px; font-size:0.88rem; color:var(--text); vertical-align:top; }
+        .td-name { font-weight:600; color:var(--white); }
+        .td-sub  { font-size:0.78rem; color:var(--muted); margin-top:3px; }
+        .badge {
+            display:inline-flex; align-items:center; gap:5px;
+            padding:3px 10px; border-radius:20px;
+            font-size:0.73rem; font-weight:700; white-space:nowrap;
+        }
+        .badge-blue  { background:rgba(0,132,255,0.12); border:1px solid rgba(0,132,255,0.25); color:var(--glow); }
+        .badge-green { background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.25); color:#4ade80; }
+        .badge-red   { background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.25); color:#f87171; }
+        .badge-gray  { background:rgba(255,255,255,0.05); border:1px solid var(--border); color:var(--muted); }
+        .msg-preview { color:var(--muted); font-size:0.82rem; max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .action-btn {
+            padding:6px 12px; border-radius:7px; border:none;
+            font-size:0.8rem; font-weight:600; cursor:pointer;
+            font-family:'Inter',sans-serif; transition:var(--tr);
+            display:inline-flex; align-items:center; gap:5px;
+        }
+        .btn-del { background:rgba(239,68,68,0.1); color:#f87171; border:1px solid rgba(239,68,68,0.2); }
+        .btn-del:hover { background:rgba(239,68,68,0.2); border-color:rgba(239,68,68,0.5); }
+        .btn-view { background:rgba(0,85,255,0.1); color:var(--glow); border:1px solid rgba(0,132,255,0.2); margin-right:6px; }
+        .btn-view:hover { background:rgba(0,85,255,0.2); }
+
+        /* Empty state */
+        .empty-state { padding:60px 20px; text-align:center; color:var(--muted); }
+        .empty-state i { font-size:3rem; margin-bottom:14px; display:block; opacity:0.3; }
+        .empty-state p { font-size:0.92rem; }
+
+        /* Modal */
+        .modal-overlay {
+            position:fixed; inset:0; z-index:500;
+            background:rgba(0,0,0,0.75); backdrop-filter:blur(4px);
+            display:none; align-items:center; justify-content:center; padding:24px;
+        }
+        .modal-overlay.open { display:flex; }
+        .modal {
+            width:100%; max-width:540px;
+            background:#0d0e18; border:1px solid var(--border);
+            border-radius:16px; padding:32px; position:relative;
+            animation: fadeUp 0.3s ease both;
+        }
+        .modal-title { font-family:'Outfit',sans-serif; font-size:1.3rem; font-weight:800; color:var(--white); margin-bottom:20px; display:flex;align-items:center;gap:10px; }
+        .modal-close { position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.1rem; transition:color 0.2s; }
+        .modal-close:hover { color:var(--white); }
+        .modal-field { margin-bottom:14px; }
+        .modal-field label { font-size:0.73rem; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); display:block; margin-bottom:5px; }
+        .modal-field span { color:var(--white); font-size:0.92rem; }
+        .modal-body { background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px; padding:14px; color:var(--text); font-size:0.9rem; line-height:1.75; white-space:pre-wrap; max-height:200px; overflow-y:auto; }
+
+        /* Delete confirm modal */
+        .confirm-modal {
+            width:100%; max-width:400px;
+            background:#0d0e18; border:1px solid rgba(239,68,68,0.3);
+            border-radius:16px; padding:32px; position:relative;
+            animation: fadeUp 0.25s ease both; text-align:center;
+        }
+        .confirm-modal::before { content:''; position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#ef4444,#f97316);border-radius:16px 16px 0 0; }
+        .confirm-icon { font-size:2.8rem; margin-bottom:14px; }
+        .confirm-title { font-family:'Outfit',sans-serif; font-size:1.25rem; font-weight:800; color:var(--white); margin-bottom:8px; }
+        .confirm-sub { color:var(--muted); font-size:0.88rem; margin-bottom:24px; }
+        .confirm-actions { display:flex; gap:12px; justify-content:center; }
+        .btn-cancel {
+            padding:10px 24px; border-radius:9px;
+            border:1px solid var(--border); background:transparent;
+            color:var(--text); font-family:'Inter',sans-serif;
+            font-size:0.9rem; font-weight:600; cursor:pointer; transition:all 0.2s;
+        }
+        .btn-cancel:hover { border-color:rgba(255,255,255,0.2); color:var(--white); }
+        .btn-confirm-del {
+            padding:10px 24px; border-radius:9px; border:none;
+            background:linear-gradient(135deg,#ef4444,#dc2626);
+            color:#fff; font-family:'Inter',sans-serif;
+            font-size:0.9rem; font-weight:700; cursor:pointer; transition:all 0.2s;
+            display:flex; align-items:center; gap:8px;
+        }
+        .btn-confirm-del:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(239,68,68,0.4); }
+        .btn-confirm-del:disabled { opacity:0.6; pointer-events:none; }
+
+        /* Toast */
+        .toast {
+            position:fixed; bottom:24px; right:24px; z-index:999;
+            padding:13px 20px; border-radius:10px;
+            background:#1a1b2f; border:1px solid var(--border);
+            color:var(--white); font-size:0.88rem; font-weight:500;
+            display:flex; align-items:center; gap:10px;
+            transform:translateY(100px); opacity:0;
+            transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+        .toast.show { transform:translateY(0); opacity:1; }
+        .toast i { font-size:1rem; }
+        .toast.success { border-color:rgba(34,197,94,0.3); }
+        .toast.success i { color:#4ade80; }
+        .toast.error   { border-color:rgba(239,68,68,0.3); }
+        .toast.error   i { color:#f87171; }
+
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255,255,255,0.04) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 6px; height: 16px;
+        }
+        @keyframes shimmer { 0%{background-position:200%} 100%{background-position:-200%} }
+
+        @media (max-width:900px) {
+            .stats-row { grid-template-columns: 1fr 1fr; }
+            .sidebar { width: 200px; }
+        }
+        @media (max-width:640px) {
+            .sidebar { display:none; }
+            .stats-row { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── Admin Login Overlay ── -->
+<div id="loginOverlay">
+    <div class="login-card">
+        <div class="lc-logo"><i class="fa-solid fa-shield-halved"></i> SicKloT Admin</div>
+        <h2 class="lc-title">Admin Panel 🔐</h2>
+        <p class="lc-sub">Enter your credentials to access the dashboard</p>
+        <div class="lc-error" id="lcError"><i class="fa-solid fa-circle-exclamation"></i><span id="lcErrText"></span></div>
+        <form id="adminLoginForm">
+            <div class="lc-group">
+                <label>Username</label>
+                <div class="lc-wrap">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="adUser" placeholder="admin" value="admin" required>
+                </div>
+            </div>
+            <div class="lc-group">
+                <label>Password</label>
+                <div class="lc-wrap">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="adPass" placeholder="••••••••" required>
+                </div>
+            </div>
+            <button type="submit" class="lc-btn" id="lcBtn">
+                <i class="fa-solid fa-arrow-right-to-bracket"></i> Access Panel
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- ── Main App ── -->
+<div id="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sb-logo">
+            <i class="fa-solid fa-cube"></i> SicKloT
+            <span class="sb-badge">Admin</span>
+        </div>
+        <nav class="sb-nav">
+            <div class="sb-section">Overview</div>
+            <div class="sb-item active" onclick="showTab('overview')">
+                <i class="fa-solid fa-gauge-high"></i> Dashboard
+            </div>
+
+            <div class="sb-section">Data</div>
+            <div class="sb-item" id="nav-messages" onclick="showTab('messages')">
+                <i class="fa-solid fa-envelope"></i> Message Requests
+                <span class="sb-count red" id="msgBadge">0</span>
+            </div>
+            <div class="sb-item" id="nav-users" onclick="showTab('users')">
+                <i class="fa-solid fa-users"></i> Register Requests
+                <span class="sb-count" id="userBadge">0</span>
+            </div>
+
+            <div class="sb-section">Site</div>
+            <div class="sb-item" onclick="window.open('index.html','_blank')">
+                <i class="fa-solid fa-globe"></i> View Website
+            </div>
+            <div class="sb-item" onclick="window.open('contact.html','_blank')">
+                <i class="fa-solid fa-paper-plane"></i> Contact Page
+            </div>
+        </nav>
+        <div class="sb-footer">
+            <div class="sb-user">
+                <div class="sb-avatar">AD</div>
+                <div>
+                    <div class="sb-user-name">Admin</div>
+                    <div class="sb-user-role">Super Admin</div>
+                </div>
+                <i class="fa-solid fa-right-from-bracket sb-logout" onclick="logout()" title="Logout"></i>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+        <!-- Top bar -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <h2 id="pageTitle">Dashboard</h2>
+                <p id="pageSubtitle">Overview of all SicKloT activity</p>
+            </div>
+            <div class="topbar-right" style="display:flex;align-items:center;gap:10px;">
+                <span id="dbModeBadge" style="
+                    font-size:0.75rem;font-weight:700;padding:5px 12px;border-radius:20px;
+                    background:rgba(255,204,0,0.1);border:1px solid rgba(255,204,0,0.25);
+                    color:#fcd34d;display:inline-flex;align-items:center;gap:6px;
+                "><i class="fa-solid fa-spinner fa-spin" style="font-size:0.72rem"></i> Checking DB…</span>
+                <button class="refresh-btn" onclick="loadAll()">
+                    <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                </button>
+                <a href="index.html" class="refresh-btn" style="text-decoration:none;">
+                    <i class="fa-solid fa-arrow-left"></i> Back to Site
+                </a>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Stats -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,rgba(0,210,255,0.18),rgba(0,85,255,0.08));border:1px solid rgba(0,210,255,0.25);display:flex;align-items:center;justify-content:center;">
+                            <i class="fa-solid fa-envelope-open-text" style="font-size:1.2rem;color:#00d2ff;"></i>
+                        </div>
+                    </div>
+                    <div class="stat-num" id="statMsg">—</div>
+                    <div class="stat-label">Total Messages</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,rgba(239,68,68,0.18),rgba(220,38,38,0.08));border:1px solid rgba(239,68,68,0.25);display:flex;align-items:center;justify-content:center;">
+                            <i class="fa-solid fa-bell" style="font-size:1.2rem;color:#f87171;"></i>
+                        </div>
+                    </div>
+                    <div class="stat-num" id="statUnread">—</div>
+                    <div class="stat-label">Unread Messages</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,rgba(167,139,250,0.18),rgba(139,92,246,0.08));border:1px solid rgba(167,139,250,0.25);display:flex;align-items:center;justify-content:center;">
+                            <i class="fa-solid fa-users" style="font-size:1.2rem;color:#a78bfa;"></i>
+                        </div>
+                    </div>
+                    <div class="stat-num" id="statUsers">—</div>
+                    <div class="stat-label">Registered Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,rgba(34,197,94,0.18),rgba(22,163,74,0.08));border:1px solid rgba(34,197,94,0.25);display:flex;align-items:center;justify-content:center;">
+                            <i class="fa-solid fa-circle-check" style="font-size:1.2rem;color:#4ade80;"></i>
+                        </div>
+                    </div>
+                    <div class="stat-num" id="statActive">—</div>
+                    <div class="stat-label">Active Accounts</div>
+                </div>
+            </div>
+
+            <!-- ── Message Requests Table ── -->
+            <div class="table-section" id="section-messages">
+                <div class="section-header">
+                    <div class="section-title">
+                        <span class="dot" style="background:#00d2ff;box-shadow:0 0 8px #00d2ff;"></span>
+                        Message Requests
+                        <span class="badge badge-blue" id="msgCount">0 total</span>
+                    </div>
+                    <input class="search-bar" type="text" placeholder="🔍  Search messages…" oninput="filterMessages(this.value)">
+                </div>
+                <div class="tbl-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Sender</th>
+                                <th>Service</th>
+                                <th>Message</th>
+                                <th>Received</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="msgBody">
+                            <tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i><p>Loading…</p></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ── Register Requests Table ── -->
+            <div class="table-section" id="section-users">
+                <div class="section-header">
+                    <div class="section-title">
+                        <span class="dot" style="background:#a78bfa;box-shadow:0 0 8px #a78bfa;"></span>
+                        Register Requests
+                        <span class="badge badge-blue" id="userCount">0 total</span>
+                    </div>
+                    <input class="search-bar" type="text" placeholder="🔍  Search users…" oninput="filterUsers(this.value)">
+                </div>
+                <div class="tbl-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Discord</th>
+                                <th>Registered</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userBody">
+                            <tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i><p>Loading…</p></div></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal-overlay" id="confirmModal">
+    <div class="confirm-modal">
+        <div class="confirm-icon">
+            <div style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,rgba(239,68,68,0.18),rgba(220,38,38,0.08));border:1px solid rgba(239,68,68,0.3);display:inline-flex;align-items:center;justify-content:center;margin-bottom:4px;">
+                <i class="fa-solid fa-trash-can" style="font-size:1.7rem;color:#f87171;"></i>
+            </div>
+        </div>
+        <div class="confirm-title" id="confirmTitle">Delete this item?</div>
+        <div class="confirm-sub" id="confirmSub">This action cannot be undone.</div>
+        <div class="confirm-actions">
+            <button class="btn-cancel" onclick="closeModal('confirmModal')">Cancel</button>
+            <button class="btn-confirm-del" id="confirmDelBtn">
+                <i class="fa-solid fa-trash"></i> Yes, Delete
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Message Detail Modal -->
+<div class="modal-overlay" id="msgModal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal('msgModal')"><i class="fa-solid fa-xmark"></i></button>
+        <div class="modal-title"><i class="fa-solid fa-envelope" style="color:var(--glow)"></i> Message Details</div>
+        <div id="modalMsgContent"></div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><i id="toastIcon"></i><span id="toastText"></span></div>
+
+<script>
+    let adminToken = localStorage.getItem('siklot_admin_token') || '';
+    let allMessages = [], allUsers = [];
+
+    // ── Toast ─────────────────────────────────────────────
+    function toast(msg, type='success') {
+        const el = document.getElementById('toast');
+        const ic = document.getElementById('toastIcon');
+        document.getElementById('toastText').textContent = msg;
+        ic.className = type === 'success' ? 'fa-solid fa-circle-check' : 'fa-solid fa-circle-exclamation';
+        el.className = `toast ${type} show`;
+        setTimeout(() => el.classList.remove('show'), 3000);
+    }
+
+    // ── API helper ────────────────────────────────────────
+    async function api(path, opts={}) {
+        opts.headers = { ...(opts.headers||{}), 'x-admin-token': adminToken };
+        const r = await fetch('http://localhost:3000' + path, opts);
+        const d = await r.json();
+        if (!r.ok && r.status === 401) { logout(); throw new Error('Session expired'); }
+        return d;
+    }
+
+    // ── Admin login ───────────────────────────────────────
+    document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('lcBtn');
+        const err = document.getElementById('lcError');
+        const errT= document.getElementById('lcErrText');
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Checking…';
+        btn.disabled  = true;
+        err.classList.remove('show');
+
+        try {
+            const d = await fetch('http://localhost:3000/api/admin/login', {
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({
+                    username: document.getElementById('adUser').value,
+                    password: document.getElementById('adPass').value,
+                })
+            }).then(r=>r.json());
+
+            if (d.success) {
+                adminToken = d.token;
+                localStorage.setItem('siklot_admin_token', adminToken);
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('app').style.display = 'flex';
+                loadAll();
+            } else {
+                throw new Error(d.error || 'Invalid credentials');
+            }
+        } catch (ex) {
+            errT.textContent = ex.message;
+            err.classList.add('show');
+            btn.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket"></i> Access Panel';
+            btn.disabled  = false;
+        }
+    });
+
+    // If token already exists, try to load directly
+    if (adminToken) {
+        api('/api/admin/stats').then(d => {
+            if (d.success) {
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('app').style.display = 'flex';
+                applyStats(d);
+                loadAll();
+            }
+        }).catch(() => { adminToken = ''; localStorage.removeItem('siklot_admin_token'); });
+    }
+
+    // ── Logout ────────────────────────────────────────────
+    async function logout() {
+        try { await api('/api/admin/logout', {method:'POST'}); } catch(_){}
+        localStorage.removeItem('siklot_admin_token');
+        adminToken = '';
+        document.getElementById('app').style.display = 'none';
+        document.getElementById('loginOverlay').style.display = 'flex';
+        document.getElementById('adPass').value = '';
+        document.getElementById('lcBtn').disabled = false;
+        document.getElementById('lcBtn').innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket"></i> Access Panel';
+    }
+
+    // ── Tab nav ───────────────────────────────────────────
+    function showTab(tab) {
+        document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+        const titles = {
+            overview:  ['Dashboard', 'Overview of all SicKloT activity'],
+            messages:  ['Message Requests', 'All contact form submissions from users'],
+            users:     ['Register Requests', 'All user registration submissions'],
+        };
+        if (tab !== 'overview') {
+            document.getElementById(`nav-${tab}`).classList.add('active');
+        } else {
+            document.querySelector('.sb-item').classList.add('active');
+        }
+        document.getElementById('pageTitle').textContent    = titles[tab][0];
+        document.getElementById('pageSubtitle').textContent = titles[tab][1];
+
+        // Scroll to relevant section
+        if (tab === 'messages') document.getElementById('section-messages').scrollIntoView({behavior:'smooth'});
+        if (tab === 'users')    document.getElementById('section-users').scrollIntoView({behavior:'smooth'});
+    }
+
+    // ── Apply stats ───────────────────────────────────────
+    function applyStats(d) {
+        document.getElementById('statMsg').textContent    = d.totalMessages;
+        document.getElementById('statUnread').textContent = d.unreadMessages;
+        document.getElementById('statUsers').textContent  = d.totalUsers;
+        document.getElementById('statActive').textContent = d.activeUsers;
+        document.getElementById('msgBadge').textContent   = d.unreadMessages;
+        document.getElementById('userBadge').textContent  = d.totalUsers;
+        // Update DB mode badge
+        const badge = document.getElementById('dbModeBadge');
+        if (badge && d.modeLabel) {
+            const isSheets = d.mode === 'google-sheets';
+            const icon     = isSheets ? 'fa-database' : 'fa-file-lines';
+            const label    = isSheets ? 'Google Sheets' : 'Local JSON';
+            badge.innerHTML = `<i class="fa-solid ${icon}" style="font-size:0.72rem"></i> ${label}`;
+            badge.style.background  = isSheets ? 'rgba(34,197,94,0.1)'  : 'rgba(255,204,0,0.1)';
+            badge.style.borderColor = isSheets ? 'rgba(34,197,94,0.3)'  : 'rgba(255,204,0,0.3)';
+            badge.style.color       = isSheets ? '#4ade80'               : '#fcd34d';
+        }
+    }
+
+    // ── Load all data ─────────────────────────────────────
+    async function loadAll() {
+        try {
+            const [stats, msgs, usrs] = await Promise.all([
+                api('/api/admin/stats'),
+                api('/api/admin/messages'),
+                api('/api/admin/users'),
+            ]);
+            if (stats.success) applyStats(stats);
+            if (msgs.success)  { allMessages = msgs.messages; renderMessages(allMessages); }
+            if (usrs.success)  { allUsers    = usrs.users;    renderUsers(allUsers); }
+        } catch(e) { toast('Failed to load data: ' + e.message, 'error'); }
+    }
+
+    // ── SERVICE labels ────────────────────────────────────
+    const serviceMap = {
+        bot:      'Discord Bot',
+        mc:       'Minecraft',
+        hosting:  'Hosting',
+        security: 'Security',
+        web:      'Web / Dashboard',
+        other:    'Other',
+    };
+
+    // ── Render Messages ───────────────────────────────────
+    function renderMessages(list) {
+        const tb = document.getElementById('msgBody');
+        document.getElementById('msgCount').textContent = list.length + ' total';
+
+        if (!list.length) {
+            tb.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-inbox"></i><p>No messages received yet.</p></div></td></tr>`;
+            return;
+        }
+
+        tb.innerHTML = list.map(m => `
+            <tr id="mrow-${m.id}">
+                <td>
+                    <div class="td-name">${m.firstName} ${m.lastName}</div>
+                    <div class="td-sub">${m.email}</div>
+                    ${m.discord ? `<div class="td-sub"><i class="fa-brands fa-discord" style="color:#5865f2"></i> ${m.discord}</div>` : ''}
+                </td>
+                <td><span class="badge badge-blue">${serviceMap[m.service] || m.service}</span></td>
+                <td><div class="msg-preview">${m.message}</div></td>
+                <td style="white-space:nowrap;font-size:0.8rem;color:var(--muted)">${m.receivedAt}</td>
+                <td><span class="badge ${m.status === 'unread' ? 'badge-red' : 'badge-green'}">${m.status === 'unread' ? '● Unread' : '✓ Read'}</span></td>
+                <td style="white-space:nowrap">
+                    <button class="action-btn btn-view" onclick="viewMsg(${m.id})"><i class="fa-solid fa-eye"></i> View</button>
+                    <button class="action-btn btn-del"  onclick="deleteMsg(${m.id})"><i class="fa-solid fa-trash"></i></button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function filterMessages(q) {
+        q = q.toLowerCase();
+        renderMessages(allMessages.filter(m =>
+            (m.firstName+' '+m.lastName+m.email+m.message+m.service).toLowerCase().includes(q)
+        ));
+    }
+
+    // ── View message modal ────────────────────────────────
+    async function viewMsg(id) {
+        // IDs may be strings when coming from Google Sheets
+        const m = allMessages.find(x => String(x.id) === String(id));
+        if (!m) return;
+        document.getElementById('modalMsgContent').innerHTML = `
+            <div class="modal-field"><label>From</label><span>${m.firstName} ${m.lastName}</span></div>
+            <div class="modal-field"><label>Email</label><span>${m.email}</span></div>
+            ${m.discord ? `<div class="modal-field"><label>Discord</label><span>${m.discord}</span></div>` : ''}
+            <div class="modal-field"><label>Service</label><span class="badge badge-blue">${serviceMap[m.service]||m.service}</span></div>
+            <div class="modal-field"><label>Received</label><span>${m.receivedAt}</span></div>
+            <div class="modal-field"><label>Message</label></div>
+            <div class="modal-body">${m.message}</div>
+        `;
+        document.getElementById('msgModal').classList.add('open');
+        // Mark as read
+        if (m.status === 'unread') {
+            try { await api(`/api/admin/messages/${id}/read`, {method:'PATCH'}); m.status='read'; renderMessages(allMessages); loadAll(); } catch(_){}
+        }
+    }
+
+    // ── Custom confirm dialog ────────────────────────────
+    function confirmDelete(title, sub, onConfirm) {
+        document.getElementById('confirmTitle').textContent = title;
+        document.getElementById('confirmSub').textContent   = sub;
+        const btn = document.getElementById('confirmDelBtn');
+        // Remove any previous listener
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+        newBtn.addEventListener('click', async () => {
+            newBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Deleting…';
+            newBtn.disabled  = true;
+            await onConfirm();
+            closeModal('confirmModal');
+            newBtn.innerHTML = '<i class="fa-solid fa-trash"></i> Yes, Delete';
+            newBtn.disabled  = false;
+        });
+        document.getElementById('confirmModal').classList.add('open');
+    }
+
+    // ── Delete message ────────────────────────────────────
+    async function deleteMsg(id) {
+        confirmDelete(
+            'Delete Message?',
+            'This contact message will be permanently removed.',
+            async () => {
+                try {
+                    await api(`/api/admin/messages/${id}`, { method: 'DELETE' });
+                    allMessages = allMessages.filter(m => String(m.id) !== String(id));
+                    renderMessages(allMessages);
+                    loadAll();
+                    toast('Message deleted ✓');
+                } catch (e) { toast('Error: ' + e.message, 'error'); }
+            }
+        );
+    }
+
+    // ── Render Users ──────────────────────────────────────
+    function renderUsers(list) {
+        const tb = document.getElementById('userBody');
+        document.getElementById('userCount').textContent = list.length + ' total';
+
+        if (!list.length) {
+            tb.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-user-slash"></i><p>No users registered yet.</p></div></td></tr>`;
+            return;
+        }
+
+        tb.innerHTML = list.map(u => `
+            <tr id="urow-${u.id}">
+                <td>
+                    <div class="td-name">@${u.username}</div>
+                </td>
+                <td style="font-size:0.85rem">${u.email}</td>
+                <td style="font-size:0.83rem;color:var(--muted)">
+                    ${u.discord ? `<i class="fa-brands fa-discord" style="color:#5865f2"></i> ${u.discord}` : '<span style="opacity:0.4">—</span>'}
+                </td>
+                <td style="white-space:nowrap;font-size:0.8rem;color:var(--muted)">${u.registeredAt}</td>
+                <td><span class="badge ${u.status === 'active' ? 'badge-green' : 'badge-gray'}">${u.status === 'active' ? '● Active' : '○ Inactive'}</span></td>
+                <td>
+                    <button class="action-btn btn-del" onclick="deleteUser(${u.id})"><i class="fa-solid fa-trash"></i> Delete</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function filterUsers(q) {
+        q = q.toLowerCase();
+        renderUsers(allUsers.filter(u =>
+            (u.username + u.email + u.discord).toLowerCase().includes(q)
+        ));
+    }
+
+    // ── Delete user ───────────────────────────────────────
+    async function deleteUser(id) {
+        const user = allUsers.find(u => String(u.id) === String(id));
+        const name = user ? `@${user.username}` : 'this user';
+        confirmDelete(
+            `Delete ${name}?`,
+            'Their account will be permanently removed from the system.',
+            async () => {
+                try {
+                    await api(`/api/admin/users/${id}`, { method: 'DELETE' });
+                    allUsers = allUsers.filter(u => String(u.id) !== String(id));
+                    renderUsers(allUsers);
+                    loadAll();
+                    toast(`${name} deleted ✓`);
+                } catch (e) { toast('Error: ' + e.message, 'error'); }
+            }
+        );
+    }
+
+    // ── Modal close ──────────────────────────────────────
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    // Close modals by clicking outside
+    ['msgModal', 'confirmModal'].forEach(id => {
+        document.getElementById(id).addEventListener('click', function(e) {
+            if (e.target === this) closeModal(id);
+        });
+    });
+</script>
+</body>
+</html>

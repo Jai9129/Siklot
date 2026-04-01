@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SicKloT | About Us</title>
+    <meta name="description" content="Learn about SicKloT — the premium Discord development group building next-generation communities.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* ── Page Hero ── */
+        .page-hero {
+            padding: 160px 0 80px;
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+        }
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            top: -5%;
+            left: 50%;
+            width: 900px;
+            height: 600px;
+            background: radial-gradient(ellipse, rgba(0,85,255,0.12) 0%, transparent 65%);
+            transform: translateX(-50%);
+            pointer-events: none;
+        }
+        .page-hero h1 { font-size: 3.8rem; letter-spacing: -1.5px; margin-bottom: 18px; }
+        .page-hero p { color: var(--text-muted); font-size: 1.15rem; max-width: 580px; margin: 0 auto; }
+
+        /* ── Stat Counters ── */
+        .counters-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin: 80px 0;
+        }
+        .counter-card {
+            padding: 40px 24px;
+            text-align: center;
+            border-radius: 16px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            transition: var(--transition);
+        }
+        .counter-card:hover {
+            border-color: var(--blue-base);
+            transform: translateY(-4px);
+            box-shadow: var(--glow-shadow);
+        }
+        .counter-card .num {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3.2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--blue-glow), var(--blue-base));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+        .counter-card .label {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        /* ── Mission Split ── */
+        .mission-split {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            padding: 80px 0;
+        }
+        .mission-text h2 { font-size: 2.6rem; letter-spacing: -1px; margin-bottom: 20px; }
+        .mission-text p { color: var(--text-muted); font-size: 1rem; line-height: 1.8; margin-bottom: 16px; }
+        .mission-visual {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .orb-container {
+            width: 360px;
+            height: 360px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, rgba(0,210,255,0.18), rgba(0,85,255,0.08) 60%, transparent);
+            border: 1px solid rgba(0,132,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: pulse-orb 4s ease-in-out infinite;
+        }
+        @keyframes pulse-orb {
+            0%, 100% { box-shadow: 0 0 40px rgba(0,85,255,0.15); }
+            50% { box-shadow: 0 0 80px rgba(0,85,255,0.3); }
+        }
+        .orb-inner {
+            font-size: 6rem;
+            background: linear-gradient(135deg, var(--blue-glow), var(--blue-base));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .orb-ring {
+            position: absolute;
+            width: 420px;
+            height: 420px;
+            border-radius: 50%;
+            border: 1px dashed rgba(0,132,255,0.2);
+            animation: spin-slow 20s linear infinite;
+        }
+        @keyframes spin-slow { to { transform: rotate(360deg); } }
+
+        /* ── Values Grid ── */
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+            margin-top: 60px;
+        }
+        .value-card {
+            padding: 36px 28px;
+            border-radius: 16px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .value-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--blue-base), var(--blue-glow));
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .value-card:hover { transform: translateY(-5px); border-color: var(--blue-base); }
+        .value-card:hover::before { opacity: 1; }
+        .value-icon {
+            width: 52px; height: 52px;
+            border-radius: 14px;
+            background: rgba(0,85,255,0.1);
+            border: 1px solid rgba(0,132,255,0.2);
+            color: var(--blue-glow);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+        }
+        .value-card h3 { font-size: 1.2rem; margin-bottom: 10px; }
+        .value-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.7; margin: 0; }
+
+        /* ── Team Section ── */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 28px;
+            margin-top: 60px;
+        }
+        .team-card {
+            padding: 36px 24px;
+            border-radius: 16px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            text-align: center;
+            transition: var(--transition);
+        }
+        .team-card:hover { transform: translateY(-5px); border-color: var(--blue-base); box-shadow: var(--glow-shadow); }
+        .team-avatar {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue-glow), var(--blue-base));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 18px;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            overflow: hidden;
+            box-shadow: 0 0 0 3px rgba(0,210,255,0.15), 0 0 0 1px rgba(0,132,255,0.3);
+        }
+        .team-avatar img {
+            width: 100%; height: 100%;
+            object-fit: cover; object-position: center top;
+            border-radius: 50%;
+        }
+        .team-card h3 { font-size: 1.1rem; margin-bottom: 6px; }
+        .team-card .role {
+            color: var(--blue-glow);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .team-card p { color: var(--text-muted); font-size: 0.88rem; line-height: 1.6; margin: 0; }
+
+        /* ── Timeline ── */
+        .history-timeline {
+            position: relative;
+            padding: 40px 0;
+        }
+        .history-timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0; bottom: 0;
+            width: 1px;
+            background: linear-gradient(to bottom, transparent, var(--blue-base), transparent);
+            transform: translateX(-50%);
+        }
+        .history-item {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+            margin-bottom: 56px;
+            position: relative;
+        }
+        .history-item:nth-child(even) { flex-direction: row-reverse; }
+        .history-item:nth-child(even) .h-text { text-align: right; }
+        .history-dot {
+            position: absolute;
+            left: 50%;
+            top: 8px;
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            background: var(--blue-glow);
+            box-shadow: 0 0 16px rgba(0,210,255,0.6);
+            transform: translateX(-50%);
+            flex-shrink: 0;
+        }
+        .h-year {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--blue-glow);
+            width: calc(50% - 30px);
+            text-align: right;
+            flex-shrink: 0;
+        }
+        .history-item:nth-child(even) .h-year { text-align: left; }
+        .h-text {
+            width: calc(50% - 30px);
+            flex-shrink: 0;
+        }
+        .h-text h3 { font-size: 1.2rem; margin-bottom: 8px; }
+        .h-text p { color: var(--text-muted); font-size: 0.92rem; line-height: 1.7; margin: 0; }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .page-hero h1 { font-size: 2.8rem; }
+            .counters-grid { grid-template-columns: repeat(2, 1fr); }
+            .mission-split { grid-template-columns: 1fr; }
+            .orb-container { width: 260px; height: 260px; }
+            .orb-ring { width: 310px; height: 310px; }
+            .values-grid { grid-template-columns: repeat(2, 1fr); }
+            .history-timeline::before { left: 20px; }
+            .history-item, .history-item:nth-child(even) { flex-direction: column; gap: 12px; padding-left: 48px; }
+            .history-dot { left: 20px; }
+            .h-year, .history-item:nth-child(even) .h-year { width: auto; text-align: left; font-size: 1.4rem; }
+            .h-text, .history-item:nth-child(even) .h-text { width: auto; text-align: left; }
+        }
+        @media (max-width: 600px) {
+            .page-hero h1 { font-size: 2.2rem; }
+            .counters-grid { grid-template-columns: 1fr 1fr; }
+            .values-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <i class="fa-solid fa-cube"></i> SicKloT
+            </a>
+            <ul class="nav-links">
+                <li><a href="info.html" style="color:#fff;">Info</a></li>
+                <li><a href="feature.html">Features</a></li>
+                <li><a href="plans.html">Plans</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="#" class="btn btn-outline"><i class="fa-regular fa-user"></i> Client Area</a>
+                <a href="https://discord.gg/YWmDpp5q3M" target="_blank" class="btn btn-primary"><i class="fa-brands fa-discord"></i> Discord</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Hero -->
+    <header class="page-hero">
+        <div class="container">
+            <div class="badge"><i class="fa-solid fa-circle-info"></i> About SicKloT</div>
+            <h1>Built by Builders, <span class="text-gradient">For Communities</span></h1>
+            <p>We're a tightly-knit development group obsessed with engineering premium digital experiences that communities are proud to call home.</p>
+        </div>
+    </header>
+
+    <!-- Stat Counters -->
+    <section class="section" style="padding-top: 0;">
+        <div class="container">
+            <div class="counters-grid">
+                <div class="counter-card">
+                    <div class="num">150+</div>
+                    <div class="label"><i class="fa-solid fa-users" style="color:var(--blue-glow);margin-right:6px;"></i> Communities Served</div>
+                </div>
+                <div class="counter-card">
+                    <div class="num">98%</div>
+                    <div class="label"><i class="fa-solid fa-heart" style="color:var(--blue-glow);margin-right:6px;"></i> Client Satisfaction</div>
+                </div>
+                <div class="counter-card">
+                    <div class="num">3+</div>
+                    <div class="label"><i class="fa-solid fa-calendar" style="color:var(--blue-glow);margin-right:6px;"></i> Years of Experience</div>
+                </div>
+                <div class="counter-card">
+                    <div class="num">24/7</div>
+                    <div class="label"><i class="fa-solid fa-headset" style="color:var(--blue-glow);margin-right:6px;"></i> Active Support</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="section" style="padding-top: 0;">
+        <div class="container">
+            <div class="mission-split">
+                <div class="mission-text">
+                    <div class="badge" style="margin-bottom:20px;"><i class="fa-solid fa-bullseye"></i> Our Mission</div>
+                    <h2>We Build the Infrastructure <span class="text-gradient">Behind Great Communities</span></h2>
+                    <p>SicKloT was founded on one simple principle: every gaming community deserves professional-grade tools and infrastructure — not just the big ones. We level the playing field.</p>
+                    <p>From a single Discord bot to a full Minecraft network with custom dashboards, we bring the same obsessive attention to detail and engineering quality to every project, big or small.</p>
+                    <a href="contact.html" class="btn btn-primary" style="margin-top:12px;display:inline-block;"><i class="fa-solid fa-paper-plane"></i> Work With Us</a>
+                </div>
+                <div class="mission-visual">
+                    <div class="orb-ring"></div>
+                    <div class="orb-container">
+                        <i class="fa-solid fa-cube orb-inner"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Values -->
+    <section class="section" style="background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-base) 100%); border-top:1px solid var(--border-subtle);">
+        <div class="container">
+            <div class="section-header">
+                <h2>What We <span class="text-gradient">Stand For</span></h2>
+                <p>These aren't buzzwords — they're the principles we apply to every line of code and every server we build.</p>
+            </div>
+            <div class="values-grid">
+                <div class="value-card">
+                    <div class="value-icon"><i class="fa-solid fa-gem"></i></div>
+                    <h3>Uncompromising Quality</h3>
+                    <p>We never ship half-baked solutions. Every deliverable goes through rigorous internal testing before it reaches your community.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon"><i class="fa-solid fa-eye"></i></div>
+                    <h3>Full Transparency</h3>
+                    <p>No hidden fees, no vague timelines. You get a clear roadmap and live progress access from day one to launch.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon"><i class="fa-solid fa-bolt"></i></div>
+                    <h3>Performance First</h3>
+                    <p>Raw speed matters. Our bots and servers are optimized at the infrastructure level — not just the surface.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                    <h3>Security Built-In</h3>
+                    <p>Security is never an afterthought. Anti-nuke, DDoS mitigation, and automated backups are baked into every product.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon"><i class="fa-solid fa-headset"></i></div>
+                    <h3>Community-Centric Support</h3>
+                    <p>Our support team lives in Discord. We respond fast, resolve completely, and follow up to ensure you're satisfied.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon"><i class="fa-solid fa-arrows-rotate"></i></div>
+                    <h3>Always Evolving</h3>
+                    <p>We don't stop at delivery. We push continuous updates, patches, and improvements to everything we've built for you.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Meet the <span class="text-gradient">Team</span></h2>
+                <p>Passionate engineers and community experts united by a love for building things that matter.</p>
+            </div>
+            <div class="team-grid">
+
+                <!-- Zico — Founder & Lead Developer -->
+                <div class="team-card">
+                    <div class="team-avatar" style="background:linear-gradient(135deg,#00d2ff,#0055ff);">
+                        <img src="https://media.discordapp.net/attachments/1488750307034005554/1488750346753933433/04acde77bd1f0a36a40dbcb1a4a7976f.jpg?ex=69cdea4e&is=69cc98ce&hm=cc1364d8170e19446e45f3d69ed9c18205966671fc936dfb8de408f35b8baa21&=&format=webp" alt="Zico" onerror="this.style.display='none';this.parentElement.textContent='ZC'">
+                    </div>
+                    <h3>Zico</h3>
+                    <div class="role"><i class="fa-solid fa-crown"></i> Founder &amp; Lead Developer</div>
+                    <p>Architect of the SicKloT vision. Leads the team with a focus on quality, performance, and building tools that communities actually need.</p>
+                </div>
+
+                <!-- Vintrix — Co-Founder & Lead Developer -->
+                <div class="team-card">
+                    <div class="team-avatar" style="background:linear-gradient(135deg,#a78bfa,#6d28d9);">
+                        <img src="https://media.discordapp.net/attachments/1488750307034005554/1488750690972205155/be99eb2f2761ee888c856b6361d03ebb.png?ex=69cdeaa0&is=69cc9920&hm=65e982fca884e96e05ca70088e0d4d5e3fba02a17f9ac185d11948539e5729c1&=&format=webp&quality=lossless" alt="Vintrix" onerror="this.style.display='none';this.parentElement.textContent='VX'">
+                    </div>
+                    <h3>Vintrix</h3>
+                    <div class="role"><i class="fa-solid fa-star"></i> Co-Founder &amp; Lead Developer</div>
+                    <p>Co-architect of the SicKloT platform. Partners with Zico on core systems, tooling strategy, and overall development direction.</p>
+                </div>
+
+                <!-- Nihalu — Bot Developer -->
+                <div class="team-card">
+                    <div class="team-avatar" style="background:linear-gradient(135deg,#06b6d4,#0891b2);">NH</div>
+                    <h3>Nihalu</h3>
+                    <div class="role"><i class="fa-solid fa-robot"></i> Bot Developer</div>
+                    <p>Specializes in building powerful, feature-rich Discord bots. Turns complex ideas into smooth, reliable bot experiences for every community.</p>
+                </div>
+
+                <!-- Zico — Minecraft Server Developer -->
+                <div class="team-card">
+                    <div class="team-avatar" style="background:linear-gradient(135deg,#34d399,#059669);"
+                    >
+                        <img src="https://media.discordapp.net/attachments/1488750307034005554/1488750346753933433/04acde77bd1f0a36a40dbcb1a4a7976f.jpg?ex=69cdea4e&is=69cc98ce&hm=cc1364d8170e19446e45f3d69ed9c18205966671fc936dfb8de408f35b8baa21&=&format=webp" alt="Zico" onerror="this.style.display='none';this.parentElement.textContent='ZC'">
+                    </div>
+                    <h3>Zico</h3>
+                    <div class="role"><i class="fa-solid fa-gamepad"></i> Minecraft Server Developer</div>
+                    <p>Designs and deploys full Minecraft networks — from proxy setups to plugin configs, performance tuning, and custom world integration.</p>
+                </div>
+
+                <!-- Vintrix — Discord Developer -->
+                <div class="team-card">
+                    <div class="team-avatar" style="background:linear-gradient(135deg,#5865f2,#4752c4);">
+                        <img src="https://media.discordapp.net/attachments/1488750307034005554/1488750690972205155/be99eb2f2761ee888c856b6361d03ebb.png?ex=69cdeaa0&is=69cc9920&hm=65e982fca884e96e05ca70088e0d4d5e3fba02a17f9ac185d11948539e5729c1&=&format=webp&quality=lossless" alt="Vintrix" onerror="this.style.display='none';this.parentElement.textContent='VX'">
+                    </div>
+                    <h3>Vintrix</h3>
+                    <div class="role"><i class="fa-brands fa-discord"></i> Discord Developer</div>
+                    <p>Expert in Discord server architecture — building structured, secure, and beautifully organized servers for communities of all sizes.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- History Timeline -->
+    <section class="section" style="background: linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-base) 100%); border-top:1px solid var(--border-subtle);">
+        <div class="container">
+            <div class="section-header">
+                <h2>Our <span class="text-gradient">Journey</span></h2>
+                <p>From a small Discord server to a full-scale development group.</p>
+            </div>
+            <div class="history-timeline">
+
+                <!-- 2026 — The Real Beginning -->
+                <div class="history-item">
+                    <div class="h-year">2025</div>
+                    <div class="history-dot" style="background:var(--blue-glow);box-shadow:0 0 20px rgba(0,210,255,0.8);width:18px;height:18px;top:4px;"></div>
+                    <div class="h-text">
+                        <h3>The Beginning <span style="font-size:0.75rem;font-weight:700;background:linear-gradient(135deg,var(--blue-glow),var(--blue-base));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-left:8px;">● NOW</span></h3>
+                        <p>SicKloT officially launches — building custom Discord bots, Minecraft networks, and premium hosting infrastructure. The journey starts here and everything is on the way.</p>
+                    </div>
+                </div>
+
+                <!-- Coming Soon entries -->
+                <div class="history-item" style="opacity:0.9;">
+                    <div class="h-year">2026</div>
+                    <div class="history-dot" style="background:linear-gradient(135deg,#f59e0b,#d97706);box-shadow:0 0 18px rgba(245,158,11,0.7);width:18px;height:18px;top:4px;"></div>
+                    <div class="h-text">
+                        <h3>Commercial Bot Launch <span style="font-size:0.72rem;padding:2px 10px;border-radius:20px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.35);color:#fbbf24;margin-left:8px;font-weight:700;">⚙ IN PROGRESS</span></h3>
+                        <p>Public release of our flagship bots — Lyrio, RinoX, and Sick — actively in development. Launching very soon for all communities.</p>
+                    </div>
+                </div>
+
+                <div class="history-item" style="opacity:0.35;">
+                    <div class="h-year" style="color:var(--text-muted);font-size:1.4rem;">Soon™</div>
+                    <div class="history-dot" style="background:var(--border-subtle);box-shadow:none;border:2px dashed rgba(255,255,255,0.15);"></div>
+                    <div class="h-text">
+                        <h3 style="color:var(--text-muted);">Dedicated Hosting Nodes <span style="font-size:0.72rem;padding:2px 10px;border-radius:20px;background:rgba(0,210,255,0.06);border:1px solid rgba(0,210,255,0.15);color:var(--blue-glow);margin-left:8px;font-weight:700;">COMING SOON</span></h3>
+                        <p>Bare-metal servers, NVMe storage, and enterprise DDoS protection rolling out for all hosting clients.</p>
+                    </div>
+                </div>
+
+                <div class="history-item" style="opacity:0.25;">
+                    <div class="h-year" style="color:var(--text-muted);font-size:1.4rem;">Future</div>
+                    <div class="history-dot" style="background:var(--border-subtle);box-shadow:none;border:2px dashed rgba(255,255,255,0.1);"></div>
+                    <div class="h-text">
+                        <h3 style="color:var(--text-muted);">And Much More… <span style="font-size:0.72rem;padding:2px 10px;border-radius:20px;background:rgba(167,139,250,0.08);border:1px solid rgba(167,139,250,0.2);color:#a78bfa;margin-left:8px;font-weight:700;">THE STORY CONTINUES</span></h3>
+                        <p>We're just getting started. The best is yet to come — follow our Discord for every announcement.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="logo"><i class="fa-solid fa-cube"></i> SicKloT</div>
+                    <p>A dedicated development group delivering custom Discord bots, professional server setups, and Minecraft solutions for gaming communities worldwide.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Pages</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="info.html">About</a></li>
+                        <li><a href="feature.html">Features</a></li>
+                        <li><a href="plans.html">Plans</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Data Centers</a></li>
+                        <li><a href="contact.html">Contact Support</a></li>
+                        <li><a href="#">Status Page</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Acceptable Use</a></li>
+                        <li><a href="#">Refund Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="copy">&copy; 2026 SicKloT Hosting &amp; Development. All rights reserved.</div>
+                <div class="social-links">
+                    <a href="https://discord.gg/YWmDpp5q3M" target="_blank"><i class="fa-brands fa-discord"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
