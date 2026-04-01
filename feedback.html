@@ -190,6 +190,7 @@
     </footer>
 
     <script src="script.js"></script>
+    <script src="api-config.js"></script>
     <script>
         // Star Rating Logic
         const stars = document.querySelectorAll('.star-rating i');
@@ -226,7 +227,7 @@
             resDiv.style.display = 'none';
 
             try {
-                const res = await fetch('http://localhost:3000/api/feedback', {
+                const res = await fetch(window.getApiUrl('/api/feedback'), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
@@ -260,7 +261,7 @@
         async function loadFeedbacks() {
             const container = document.getElementById('reviewsContainer');
             try {
-                const res = await fetch('http://localhost:3000/api/feedback');
+                const res = await fetch(window.getApiUrl('/api/feedback'));
                 const json = await res.json();
                 
                 if(json.success && json.data.length > 0) {

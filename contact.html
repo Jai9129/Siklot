@@ -382,6 +382,7 @@
     </footer>
 
     <script src="script.js"></script>
+    <script src="api-config.js"></script>
     <script>
         const form        = document.getElementById('contactForm');
         const successBox  = document.getElementById('formSuccess');
@@ -405,7 +406,7 @@
             submitBtn.disabled  = true;
 
             try {
-                const res  = await fetch('http://localhost:3000/submit-contact', {
+                const res  = await fetch(window.getApiUrl('/submit-contact'), {
                     method  : 'POST',
                     headers : { 'Content-Type': 'application/json' },
                     body    : JSON.stringify(payload),

@@ -557,7 +557,8 @@
 <!-- Toast -->
 <div class="toast" id="toast"><i id="toastIcon"></i><span id="toastText"></span></div>
 
-<script>
+    <script src="api-config.js"></script>
+    <script>
     let adminToken = localStorage.getItem('siklot_admin_token') || '';
     let allMessages = [], allUsers = [];
 
@@ -574,7 +575,7 @@
     // ── API helper ────────────────────────────────────────
     async function api(path, opts={}) {
         opts.headers = { ...(opts.headers||{}), 'x-admin-token': adminToken };
-        const r = await fetch('http://localhost:3000' + path, opts);
+        const r = await fetch(window.getApiUrl(path), opts);
         const d = await r.json();
         if (!r.ok && r.status === 401) { logout(); throw new Error('Session expired'); }
         return d;
@@ -591,7 +592,7 @@
         err.classList.remove('show');
 
         try {
-            const d = await fetch('http://localhost:3000/api/admin/login', {
+            const d = await fetch(window.getApiUrl('/api/admin/login'), {
                 method:'POST',
                 headers:{'Content-Type':'application/json'},
                 body: JSON.stringify({

@@ -225,6 +225,7 @@
         </a>
     </div>
 
+    <script src="api-config.js"></script>
     <script>
         // Password visibility toggle
         document.getElementById('togglePass').addEventListener('click', () => {
@@ -247,7 +248,7 @@
             errD.classList.remove('show');
 
             try {
-                const res  = await fetch('http://localhost:3000/api/login', {
+                const res  = await fetch(window.getApiUrl('/api/login'), {
                     method:  'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body:    JSON.stringify({

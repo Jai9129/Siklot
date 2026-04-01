@@ -256,6 +256,7 @@
         </div>
     </div>
 
+    <script src="api-config.js"></script>
     <script>
         // Password visibility toggles
         function makeToggle(btnId, inputId) {
@@ -315,7 +316,7 @@
             btn.disabled  = true;
 
             try {
-                const res  = await fetch('http://localhost:3000/api/register', {
+                const res  = await fetch(window.getApiUrl('/api/register'), {
                     method:  'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body:    JSON.stringify({
