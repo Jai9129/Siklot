@@ -31,10 +31,12 @@ const CREDS_FILE = path.join(__dirname, 'google-credentials.json');
 // ════ LOCAL FILE PATHS (fallback when Sheets not configured) ════════════
 const MESSAGES_FILE = path.join(__dirname, 'messages.json');
 const USERS_FILE    = path.join(__dirname, 'users.json');
+const FEEDBACK_FILE = path.join(__dirname, 'feedback.json');
 
 // ════ SHEET COLUMN LAYOUTS ═══════════════════════════════════════════════
 const MSG_COLS  = ['id','receivedAt','firstName','lastName','email','discord','service','message','status'];
 const USER_COLS = ['id','registeredAt','username','email','discord','passwordHash','salt','status'];
+const FEEDBACK_COLS = ['id','submittedAt','name','rating','message','status'];
 
 // ════ RUNTIME STATE ══════════════════════════════════════════════════════
 let sheetsAPI  = null;  // Google Sheets API client (null = not connected)
@@ -217,6 +219,32 @@ async function saveUsers(users) {
     saveJSON(USERS_FILE, users);
 }
 
+async function loadFeedback() {
+    if (googleMode) {
+        try   { return await sheetGetAll('Feedback', FEEDBACK_COLS); }
+        catch (e) { console.error('[Sheets] loadFeedback error:', e.message); }
+    }
+    return loadJSON(FEEDBACK_FILE);
+}
+
+async function appendFeedback(feedback) {
+    if (googleMode) {
+        try   { return await sheetAppend('Feedback', FEEDBACK_COLS, feedback); }
+        catch (e) { console.error('[Sheets] appendFeedback error:', e.message); }
+    }
+    const feedbacks = loadJSON(FEEDBACK_FILE);
+    feedbacks.unshift(feedback);
+    saveJSON(FEEDBACK_FILE, feedbacks);
+}
+
+async function saveFeedback(feedbacks) {
+    if (googleMode) {
+        try   { return await sheetSaveAll('Feedback', FEEDBACK_COLS, feedbacks); }
+        catch (e) { console.error('[Sheets] saveFeedback error:', e.message); }
+    }
+    saveJSON(FEEDBACK_FILE, feedbacks);
+}
+
 // ════ GOOGLE SHEETS INITIALISATION ══════════════════════════════════════
 async function initGoogle() {
     // Check prerequisites
@@ -244,9 +272,9 @@ async function initGoogle() {
         const meta = await sheetsAPI.spreadsheets.get({ spreadsheetId: SPREADSHEET_ID });
         console.log(`  📊  Spreadsheet: "${meta.data.properties.title}"`);
 
-        // Verify "Messages" and "Users" sheets exist
+        // Verify "Messages", "Users", and "Feedback" sheets exist
         const sheetNames = meta.data.sheets.map(s => s.properties.title);
-        const missing   = ['Messages', 'Users'].filter(n => !sheetNames.includes(n));
+        const missing   = ['Messages', 'Users', 'Feedback'].filter(n => !sheetNames.includes(n));
         if (missing.length) {
             throw new Error(`Missing sheets: ${missing.join(', ')}. Create them in your spreadsheet — see SETUP_GUIDE.md`);
         }
@@ -254,6 +282,7 @@ async function initGoogle() {
         // Ensure column headers are set
         await ensureSheetHeaders('Messages', MSG_COLS);
         await ensureSheetHeaders('Users',    USER_COLS);
+        await ensureSheetHeaders('Feedback', FEEDBACK_COLS);
 
         googleMode = true;
         console.log('  ✅  Google Sheets database CONNECTED!');
@@ -276,6 +305,35 @@ app.get('/api/status', (req, res) => {
         mode:    googleMode ? 'google-sheets' : 'local-json',
         label:   googleMode ? '🟢 Google Sheets' : '🟡 Local JSON',
     });
+});
+
+// ── Feedback API ─────────────────────────────────────────────────────────
+app.get('/api/feedback', async (req, res) => {
+    try {
+        const feedbacks = await loadFeedback();
+        // Default to returning only approved feedback, or if status missing assume approved
+        const approved = feedbacks.filter(f => !f.status || f.status === 'approved');
+        res.json({ success: true, data: approved });
+    } catch (e) { res.status(500).json({ success: false, error: e.message }); }
+});
+
+app.post('/api/feedback', async (req, res) => {
+    const { name, rating, message } = req.body;
+    if (!name || !rating || !message) {
+        return res.status(400).json({ success: false, error: 'Name, rating, and message are required.' });
+    }
+    try {
+        await appendFeedback({
+            id: Date.now(),
+            submittedAt: nowIST(),
+            name,
+            rating: parseInt(rating, 10),
+            message,
+            status: 'approved' // Automatically approve for now
+        });
+        console.log(`✅ Feedback: from ${name} [${rating} stars]`);
+        res.json({ success: true });
+    } catch (e) { res.status(500).json({ success: false, error: e.message }); }
 });
 
 // ── Admin login ──────────────────────────────────────────────────────────

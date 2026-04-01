@@ -51,6 +51,7 @@
                 <li><a href="info.html">Info</a></li>
                 <li><a href="feature.html">Features</a></li>
                 <li><a href="plans.html">Plans</a></li>
+                <li><a href="feedback.html">Feedback</a></li>
                 <li><a href="contact.html">Contact</a></li>
             </ul>
             <div class="nav-actions" id="navActions">
@@ -74,6 +75,11 @@
             <div class="hero-actions">
                 <a href="#pricing" class="btn btn-primary">View Packages</a>
                 <a href="https://discord.gg/YWmDpp5q3M" target="_blank" class="btn btn-outline"><i class="fa-brands fa-discord"></i> Join Discord</a>
+            </div>
+
+            <div id="discordStatus" style="margin: 20px auto 30px; display: inline-flex; align-items: center; gap: 12px; background: rgba(88,101,242,0.1); border: 1px solid rgba(88,101,242,0.3); padding: 8px 20px; border-radius: 50px; font-size: 0.9rem; color: #fff;">
+                <i class="fa-brands fa-discord" style="color:#5865f2; font-size: 1.2rem;"></i>
+                <span id="discordCounts"><i class="fa-solid fa-circle-notch fa-spin"></i> Loading community stats...</span>
             </div>
             
             <div class="stats-row">
@@ -235,6 +241,24 @@
                     <span class="btn btn-disabled"><i class="fa-solid fa-hourglass-half"></i> Coming Soon</span>
                 </div>
 
+            </div>
+        </div>
+    </section>
+
+    <!-- Feedback Section -->
+    <section class="section" id="feedback">
+        <div class="container">
+            <div class="section-header">
+                <h2>Community <span class="text-gradient">Voice</span></h2>
+                <p>Read what our clients and community members have to say about SicKloT bots and infrastructure.</p>
+            </div>
+            <div id="homeFeedbackGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; margin-bottom: 30px;">
+                <div style="text-align:center; padding: 40px; color: var(--text-muted); grid-column: 1/-1;">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i> Loading recent reviews...
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <a href="feedback.html" class="btn btn-outline">Read More &amp; Leave a Review <i class="fa-solid fa-arrow-right"></i></a>
             </div>
         </div>
     </section>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SicKloT | Community Feedback</title>
+    <meta name="description" content="Read reviews and provide feedback for SicKloT Development Group.">
+    <meta name="keywords" content="SicKloT Development Group, SicKloT Development, SicKloT Bot, RinoX bot, Lyrio Bot, ZoroX bot, SicKloT Discord, Discord bots, Minecraft hosting, community infrastructure">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .page-hero { padding: 160px 0 80px; position: relative; text-align: center; overflow: hidden; }
+        .page-hero::before {
+            content: ''; position: absolute; top: -5%; left: 50%; width: 900px; height: 600px;
+            background: radial-gradient(ellipse, rgba(0,85,255,0.12) 0%, transparent 65%);
+            transform: translateX(-50%); pointer-events: none;
+        }
+        .page-hero h1 { font-size: 3.8rem; letter-spacing: -1.5px; margin-bottom: 18px; }
+        .page-hero p { color: var(--text-muted); font-size: 1.15rem; max-width: 580px; margin: 0 auto; }
+
+        /* Review Form */
+        .feedback-form-card {
+            border-radius: 20px; border: 1px solid var(--border-subtle);
+            background: var(--bg-card); backdrop-filter: blur(16px);
+            padding: 44px 40px; position: relative; overflow: hidden;
+            max-width: 600px; margin: 0 auto 60px;
+        }
+        .feedback-form-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--blue-base), var(--blue-glow));
+        }
+        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+        .form-group label { font-size: 0.88rem; font-weight: 600; color: var(--text-dark); }
+        .form-group input, .form-group textarea, .form-group select {
+            padding: 12px 16px; border-radius: 10px; border: 1px solid var(--border-subtle);
+            background: rgba(255,255,255,0.04); color: var(--text-pure); font-family: 'Inter', sans-serif;
+            transition: var(--transition);
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none; border-color: var(--blue-base); background: rgba(0,85,255,0.05);
+        }
+        .star-rating {
+            display: flex; gap: 10px; font-size: 1.5rem; color: #3f4255; cursor: pointer;
+        }
+        .star-rating i.active { color: #f59e0b; text-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
+        
+        /* Reviews Grid */
+        .reviews-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;
+        }
+        .review-card {
+            padding: 28px; border-radius: 16px; border: 1px solid var(--border-subtle);
+            background: rgba(255,255,255,0.02); backdrop-filter: blur(12px);
+            transition: var(--transition); position: relative; overflow: hidden;
+        }
+        .review-card:hover { transform: translateY(-4px); border-color: rgba(0,85,255,0.3); }
+        .review-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+        .review-author { display: flex; align-items: center; gap: 12px; }
+        .author-avatar {
+            width: 44px; height: 44px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue-base), var(--blue-glow));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-family: 'Outfit'; color: #fff;
+        }
+        .author-info h4 { margin: 0; font-size: 1.05rem; }
+        .author-info span { font-size: 0.8rem; color: var(--text-muted); }
+        .review-stars { color: #f59e0b; font-size: 0.9rem; }
+        .review-body { color: var(--text-dark); line-height: 1.6; font-size: 0.95rem; }
+
+        @media (max-width: 600px) {
+            .page-hero h1 { font-size: 2.8rem; }
+            .feedback-form-card { padding: 30px 22px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="container nav-container">
+            <a href="index.html" class="logo"><i class="fa-solid fa-cube"></i> SicKloT</a>
+            <ul class="nav-links">
+                <li><a href="info.html">Info</a></li>
+                <li><a href="feature.html">Features</a></li>
+                <li><a href="plans.html">Plans</a></li>
+                <li><a href="feedback.html" style="color:#fff;">Feedback</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="login.html" class="btn btn-outline"><i class="fa-regular fa-user"></i> Login</a>
+                <a href="https://discord.gg/YWmDpp5q3M" target="_blank" class="btn btn-primary"><i class="fa-brands fa-discord"></i> Discord</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="page-hero">
+        <div class="container">
+            <div class="badge"><i class="fa-solid fa-star"></i> Community Voice</div>
+            <h1>What They <span class="text-gradient">Say About Us</span></h1>
+            <p>Your feedback shapes the future of SicKloT. Read what our community thinks and share your own experience.</p>
+        </div>
+    </header>
+
+    <section class="section" style="padding-top:0;">
+        <div class="container">
+            
+            <div class="feedback-form-card">
+                <h3>Submit Your Feedback</h3>
+                <p style="color:var(--text-muted); margin-bottom: 24px;">Had an experience with our bots or hosting? Let us know!</p>
+                <form id="feedbackForm">
+                    <div class="form-group">
+                        <label>Your Name / Discord Tag</label>
+                        <input type="text" id="fbName" placeholder="e.g. Jai Gupta#1234" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Rating</label>
+                        <div class="star-rating" id="starRating">
+                            <i class="fa-solid fa-star active" data-val="1"></i>
+                            <i class="fa-solid fa-star active" data-val="2"></i>
+                            <i class="fa-solid fa-star active" data-val="3"></i>
+                            <i class="fa-solid fa-star active" data-val="4"></i>
+                            <i class="fa-solid fa-star active" data-val="5"></i>
+                        </div>
+                        <input type="hidden" id="fbRating" value="5">
+                    </div>
+                    <div class="form-group">
+                        <label>Your Feedback</label>
+                        <textarea id="fbMessage" rows="4" placeholder="How was your experience?" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:10px;" id="fbSubmit">
+                        <i class="fa-solid fa-paper-plane"></i> Submit Feedback
+                    </button>
+                    <div id="fbResult" style="margin-top:16px; font-size:0.9rem; text-align:center; display:none;"></div>
+                </form>
+            </div>
+
+            <div style="margin-bottom: 30px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 16px;">
+                <h3 style="font-size: 1.8rem; font-family: 'Outfit';">Recent Reviews</h3>
+            </div>
+
+            <div class="reviews-grid" id="reviewsContainer">
+                <div style="text-align:center; padding: 40px; color: var(--text-muted); grid-column: 1/-1;">
+                    <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                    <p>Loading feedback...</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer>
+        <div class="container footer-container">
+            <div class="footer-brand">
+                <div class="logo"><i class="fa-solid fa-cube"></i> SicKloT</div>
+                <p>Architecting premium digital communities with unmatched bots and reliable performance.</p>
+                <div class="social-links" style="margin-top:20px;">
+                    <a href="https://discord.gg/YWmDpp5q3M"><i class="fa-brands fa-discord"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4>Platform</h4>
+                <ul>
+                    <li><a href="feature.html">Features</a></li>
+                    <li><a href="plans.html">Pricing</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="info.html">About Us</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2026 SicKloT Development Group. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Star Rating Logic
+        const stars = document.querySelectorAll('.star-rating i');
+        const ratingInput = document.getElementById('fbRating');
+
+        stars.forEach(star => {
+            star.addEventListener('click', (e) => {
+                const val = parseInt(e.target.getAttribute('data-val'));
+                ratingInput.value = val;
+                stars.forEach(s => {
+                    if(parseInt(s.getAttribute('data-val')) <= val) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        // Form Submit
+        document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('fbSubmit');
+            const resDiv = document.getElementById('fbResult');
+            
+            const payload = {
+                name: document.getElementById('fbName').value,
+                rating: document.getElementById('fbRating').value,
+                message: document.getElementById('fbMessage').value
+            };
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Submitting...';
+            resDiv.style.display = 'none';
+
+            try {
+                const res = await fetch('/api/feedback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                
+                if(data.success) {
+                    resDiv.textContent = 'Thank you! Your feedback has been submitted successfully.';
+                    resDiv.style.color = '#34d399';
+                    resDiv.style.display = 'block';
+                    document.getElementById('feedbackForm').reset();
+                    ratingInput.value = 5;
+                    stars.forEach(s => s.classList.add('active'));
+                    loadFeedbacks(); // Reload to show new
+                } else {
+                    resDiv.textContent = data.error || 'Failed to submit feedback.';
+                    resDiv.style.color = '#f87171';
+                    resDiv.style.display = 'block';
+                }
+            } catch(e) {
+                resDiv.textContent = 'Server error. Please try again later.';
+                resDiv.style.color = '#f87171';
+                resDiv.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Feedback';
+            }
+        });
+
+        // Load Feedbacks
+        async function loadFeedbacks() {
+            const container = document.getElementById('reviewsContainer');
+            try {
+                const res = await fetch('/api/feedback');
+                const json = await res.json();
+                
+                if(json.success && json.data.length > 0) {
+                    container.innerHTML = '';
+                    json.data.forEach(fb => {
+                        const starsHTML = Array(5).fill(0).map((_, i) => 
+                            `<i class="fa-solid fa-star" style="color:${i < fb.rating ? '#f59e0b' : '#3f4255'}"></i>`
+                        ).join('');
+                        
+                        const initial = fb.name.substring(0,2).toUpperCase();
+                        
+                        container.innerHTML += `
+                            <div class="review-card">
+                                <div class="review-header">
+                                    <div class="review-author">
+                                        <div class="author-avatar">${initial}</div>
+                                        <div class="author-info">
+                                            <h4>${fb.name}</h4>
+                                            <span>${fb.submittedAt ? fb.submittedAt.split(' at ')[0] : 'Recently'}</span>
+                                        </div>
+                                    </div>
+                                    <div class="review-stars">${starsHTML}</div>
+                                </div>
+                                <div class="review-body">"${fb.message}"</div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    container.innerHTML = `
+                        <div style="text-align:center; padding: 40px; color: var(--text-muted); grid-column: 1/-1;">
+                            <i class="fa-regular fa-comment-dots" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                            <p>No feedback found. Be the first to leave a review!</p>
+                        </div>
+                    `;
+                }
+            } catch(e) {
+                container.innerHTML = `
+                    <div style="text-align:center; padding: 40px; color: #f87171; grid-column: 1/-1;">
+                        Failed to load reviews.
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize
+        loadFeedbacks();
+    </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "submittedAt": "Wednesday, April 1, 2026 at 10:00:00 AM",
+    "name": "AlexGaming",
+    "rating": 5,
+    "message": "SicKloT set up my Rust server in less than a day. The performance is incredible, zero lag even with 50+ players!",
+    "status": "approved"
+  },
+  {
+    "id": 2,
+    "submittedAt": "Wednesday, April 1, 2026 at 9:30:00 AM",
+    "name": "Sarah_Dev",
+    "rating": 5,
+    "message": "Lyrio bot has completely transformed how our community handles tickets. Absolute lifesaver and great support team.",
+    "status": "approved"
+  },
+  {
+    "id": 3,
+    "submittedAt": "Wednesday, April 1, 2026 at 9:00:00 AM",
+    "name": "ZoroFan99",
+    "rating": 5,
+    "message": "Incredible development group. They built a custom Discord bot for my server and nailed every single feature request.",
+    "status": "approved"
+  }
+]
