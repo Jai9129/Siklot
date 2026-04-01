@@ -6,7 +6,7 @@
  * 
  * Example: const BACKEND_URL = "https://siklot-backend.onrender.com";
  */
-const BACKEND_URL = ""; // PASTE YOUR NEW HOSTING LINK HERE 
+const BACKEND_URL = "https://devserver-main--sicklot.netlify.app"; 
 
 window.getApiUrl = function(path) {
     // If you are testing safely on your computer, always bounce it to port 3000
