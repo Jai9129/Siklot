@@ -8,12 +8,14 @@
  * ADMIN PANEL         → http://localhost:3000/admin.html
  */
 
+require('dotenv').config();
 const express    = require('express');
 const cors       = require('cors');
 const fs         = require('fs');
 const path       = require('path');
 const crypto     = require('crypto');
 const { google } = require('googleapis');
+const nodemailer = require('nodemailer');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -32,6 +34,7 @@ const CREDS_FILE = path.join(__dirname, 'google-credentials.json');
 const MESSAGES_FILE = path.join(__dirname, 'messages.json');
 const USERS_FILE    = path.join(__dirname, 'users.json');
 const FEEDBACK_FILE = path.join(__dirname, 'feedback.json');
+const VERIFICATION_FILE = path.join(__dirname, 'verification-codes.json');
 
 // ════ SHEET COLUMN LAYOUTS ═══════════════════════════════════════════════
 const MSG_COLS  = ['id','receivedAt','firstName','lastName','email','discord','service','message','status'];
@@ -471,6 +474,135 @@ app.delete('/api/admin/users/:id', requireAdmin, async (req, res) => {
         await saveUsers(users);
         res.json({ success: true });
     } catch (e) { res.status(500).json({ success: false, error: e.message }); }
+});
+
+// ── Forgot Password / Reset Password ───────────────────────────────────────
+function loadVerificationCodes() {
+    if (!fs.existsSync(VERIFICATION_FILE)) fs.writeFileSync(VERIFICATION_FILE, '{}', 'utf-8');
+    try   { return JSON.parse(fs.readFileSync(VERIFICATION_FILE, 'utf-8')); }
+    catch { return {}; }
+}
+function saveVerificationCodes(data) {
+    fs.writeFileSync(VERIFICATION_FILE, JSON.stringify(data, null, 2), 'utf-8');
+}
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
+    }
+});
+
+app.post('/api/forgot-password', async (req, res) => {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ success: false, error: 'Email required.' });
+
+    try {
+        const users = await loadUsers();
+        const user = users.find(u => u.email?.toLowerCase() === email.toLowerCase());
+        if (!user) {
+            // For security, do not reveal if email exists, just pretend it succeeded
+            return res.json({ success: true, message: 'If an account exists, a reset code was sent.' });
+        }
+
+        // Generate 6 digit code
+        const code = crypto.randomInt(100000, 999999).toString();
+        
+        // Save code with 15 min expiration
+        const codes = loadVerificationCodes();
+        codes[email.toLowerCase()] = {
+            code,
+            expiresAt: Date.now() + 15 * 60 * 1000 // 15 mins
+        };
+        saveVerificationCodes(codes);
+
+        // Send Email
+        if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+            await transporter.sendMail({
+                from: `"SicKloT Support" <${process.env.SMTP_USER}>`,
+                to: email,
+                subject: 'Your SicKloT Password Reset Code',
+                html: `
+                    <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                        <h2 style="color: #0055ff; margin-bottom: 20px;">Password Reset Request</h2>
+                        <p>Hi ${user.username},</p>
+                        <p>We received a request to reset your SicKloT password. Your verification code is:</p>
+                        <div style="background: #f4f4f4; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 5px; color: #333; border-radius: 8px; margin: 20px 0;">
+                            ${code}
+                        </div>
+                        <p style="color: #666; font-size: 14px;">This code will expire in 15 minutes.</p>
+                        <p style="color: #666; font-size: 14px;">If you didn't request this, you can safely ignore this email.</p>
+                        <div style="margin-top: 30px; font-size: 12px; color: #999; text-align: center;">
+                            &copy; 2026 SicKloT Development Group.
+                        </div>
+                    </div>
+                `
+            });
+            console.log(`✉️ Reset Code sent to: ${email}`);
+        } else {
+            console.log(`⚠️ SMTP NOT CONFIGURED: Code for ${email} is ${code}`);
+        }
+
+        res.json({ success: true, message: 'If an account exists, a reset code was sent.' });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ success: false, error: 'Failed to process request.' });
+    }
+});
+
+app.post('/api/reset-password', async (req, res) => {
+    const { email, code, newPassword } = req.body;
+    if (!email || !code || !newPassword) {
+        return res.status(400).json({ success: false, error: 'Missing required fields.' });
+    }
+
+    try {
+        const emailLower = email.toLowerCase();
+        const codes = loadVerificationCodes();
+        const record = codes[emailLower];
+
+        if (!record || record.code !== code) {
+            return res.status(400).json({ success: false, error: 'Invalid or incorrect verification code.' });
+        }
+        if (Date.now() > record.expiresAt) {
+            delete codes[emailLower];
+            saveVerificationCodes(codes);
+            return res.status(400).json({ success: false, error: 'Verification code has expired. Please request a new one.' });
+        }
+
+        // Code is valid. Update user password.
+        const users = await loadUsers();
+        let userUpdated = false;
+
+        const updatedUsers = users.map(u => {
+            if (u.email?.toLowerCase() === emailLower) {
+                const { hash, salt } = hashPass(newPassword);
+                u.passwordHash = hash;
+                u.salt = salt;
+                userUpdated = true;
+            }
+            return u;
+        });
+
+        if (!userUpdated) {
+            return res.status(404).json({ success: false, error: 'Account not found.' });
+        }
+
+        // Save users
+        await saveUsers(updatedUsers);
+
+        // Delete code
+        delete codes[emailLower];
+        saveVerificationCodes(codes);
+
+        console.log(`🔑 Password reset successful for: ${email}`);
+        res.json({ success: true, message: 'Password has been reset successfully.' });
+
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ success: false, error: 'Failed to reset password.' });
+    }
 });
 
 // Export

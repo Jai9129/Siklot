@@ -5,6 +5,8 @@ google-credentials.json
 # Local database files (will be empty on server anyway)
 messages.json
 users.json
+feedback.json
+verification-codes.json
 
 # Node modules
 node_modules/
