@@ -326,7 +326,13 @@
                         discord:  document.getElementById('discord').value.trim(),
                     }),
                 });
-                const data = await res.json();
+                
+                let data;
+                try {
+                    data = await res.json();
+                } catch(e) {
+                    throw new Error('Backend server is offline or not configured.');
+                }
 
                 if (data.success) {
                     document.getElementById('signupForm').style.display = 'none';
@@ -336,7 +342,7 @@
                     throw new Error(data.error || 'Registration failed');
                 }
             } catch (err) {
-                errT.textContent = err.message;
+                errT.textContent = err.message === 'Failed to fetch' ? 'Cannot connect to server.' : err.message;
                 errD.classList.add('show');
                 btn.innerHTML = '<i class="fa-solid fa-user-plus"></i> Create Account';
                 btn.disabled  = false;
