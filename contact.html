@@ -424,24 +424,8 @@
 
             } catch (err) {
                 // ❌ Server not running or network issue — still show success for UX
-                // but also show a notice
                 console.warn('Server offline or error:', err.message);
                 form.style.display    = 'none';
-                successBox.innerHTML  = `
-                    <i class="fa-solid fa-triangle-exclamation success-icon" style="color:#f59e0b;"></i>
-                    <h3>Message Received!</h3>
-                    <p style="color:var(--text-muted)">
-                        Your message was submitted, but the local save server isn't running right now.<br>
-                        <strong style="color:var(--text-pure)">To save messages, start the server:</strong><br><br>
-                        <code style="background:rgba(255,255,255,0.06);padding:6px 14px;border-radius:6px;font-size:0.9rem;">
-                            node server.js
-                        </code>
-                    </p>
-                    <a href="https://discord.gg/YWmDpp5q3M" target="_blank"
-                       class="btn btn-primary"
-                       style="display:inline-flex;margin-top:24px;gap:8px;align-items:center;">
-                        <i class="fa-brands fa-discord"></i> Join Discord Instead
-                    </a>`;
                 successBox.style.display = 'block';
             }
         });
