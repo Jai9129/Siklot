@@ -6,7 +6,7 @@
  * 
  * Example: const BACKEND_URL = "https://siklot-backend.onrender.com";
  */
-const BACKEND_URL = "https://CHANGE-THIS-TO-YOUR-NODEJS-HOSTING.com"; 
+const BACKEND_URL = "https://gp.loftix.host"; 
 
 window.getApiUrl = function(path) {
     // If you are testing safely on your computer, always bounce it to port 3000
