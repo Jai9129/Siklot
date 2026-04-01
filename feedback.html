@@ -226,7 +226,7 @@
             resDiv.style.display = 'none';
 
             try {
-                const res = await fetch('/api/feedback', {
+                const res = await fetch('http://localhost:3000/api/feedback', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
@@ -260,7 +260,7 @@
         async function loadFeedbacks() {
             const container = document.getElementById('reviewsContainer');
             try {
-                const res = await fetch('/api/feedback');
+                const res = await fetch('http://localhost:3000/api/feedback');
                 const json = await res.json();
                 
                 if(json.success && json.data.length > 0) {
