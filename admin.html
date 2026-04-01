@@ -592,14 +592,17 @@
         err.classList.remove('show');
 
         try {
-            const d = await fetch(window.getApiUrl('/api/admin/login'), {
+            const r = await fetch(window.getApiUrl('/api/admin/login'), {
                 method:'POST',
                 headers:{'Content-Type':'application/json'},
                 body: JSON.stringify({
                     username: document.getElementById('adUser').value,
                     password: document.getElementById('adPass').value,
                 })
-            }).then(r=>r.json());
+            });
+            
+            let d;
+            try { d = await r.json(); } catch(e) { throw new Error('Backend server is offline.'); }
 
             if (d.success) {
                 adminToken = d.token;
@@ -611,7 +614,7 @@
                 throw new Error(d.error || 'Invalid credentials');
             }
         } catch (ex) {
-            errT.textContent = ex.message;
+            errT.textContent = ex.message === 'Failed to fetch' ? 'Cannot connect to server.' : ex.message;
             err.classList.add('show');
             btn.innerHTML = '<i class="fa-solid fa-arrow-right-to-bracket"></i> Access Panel';
             btn.disabled  = false;
