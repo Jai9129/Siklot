@@ -572,19 +572,8 @@
         setTimeout(() => el.classList.remove('show'), 3000);
     }
 
-    // ── Offline Mock Data ─────────────────────────────────
-    const isOfflineDemo = window.getApiUrl('').includes('netlify.app') || window.getApiUrl('').includes('github.io');
-
     // ── API helper ────────────────────────────────────────
     async function api(path, opts={}) {
-        if (isOfflineDemo) {
-            if (path === '/api/admin/stats') return { success: true, totalMessages: 0, unreadMessages: 0, totalUsers: 0, activeUsers: 0, modeLabel: true, mode: 'local' };
-            if (path === '/api/admin/messages') return { success: true, messages: [] };
-            if (path === '/api/admin/users') return { success: true, users: [] };
-            if (path === '/api/admin/logout') return { success: true };
-            return { success: true };
-        }
-
         opts.headers = { ...(opts.headers||{}), 'x-admin-token': adminToken };
         const r = await fetch(window.getApiUrl(path), opts);
         const d = await r.json();
@@ -606,20 +595,6 @@
         err.classList.remove('show');
 
         try {
-            if (isOfflineDemo) {
-                // Fake auth for live Netlify demo
-                if (userInp === 'admin' && passInp === 'siklot2026') {
-                    adminToken = 'fake-demo-token';
-                    localStorage.setItem('siklot_admin_token', adminToken);
-                    document.getElementById('loginOverlay').style.display = 'none';
-                    document.getElementById('app').style.display = 'flex';
-                    loadAll();
-                    return;
-                } else {
-                    throw new Error('Invalid credentials');
-                }
-            }
-
             const r = await fetch(window.getApiUrl('/api/admin/login'), {
                 method:'POST',
                 headers:{'Content-Type':'application/json'},
