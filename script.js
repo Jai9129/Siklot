@@ -43,7 +43,7 @@ async function fetchHomeFeedback() {
     const grid = document.getElementById('homeFeedbackGrid');
     if (!grid) return;
     try {
-        const res = await fetch('http://localhost:3000/api/feedback');
+        const res = await fetch('/api/feedback');
         const json = await res.json();
         
         if (json.success && json.data.length > 0) {
