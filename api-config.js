@@ -9,9 +9,24 @@
 const BACKEND_URL = "https://devserver-main--sicklot.netlify.app"; 
 
 window.getApiUrl = function(path) {
-    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:') return 'http://localhost:3000' + path;
-    if (window.location.hostname.startsWith('192.168.') || window.location.hostname.startsWith('10.0.')) return 'http://' + window.location.hostname + ':3000' + path;
-    return BACKEND_URL + path;
+    // 1. Check for Localhost / Local Filesystem
+    const isLocal = window.location.hostname === 'localhost' || 
+                    window.location.hostname === '127.0.0.1' || 
+                    window.location.protocol === 'file:';
+    
+    // 2. Check for Local LAN IP (Mobile testing)
+    const isLAN = window.location.hostname.startsWith('192.168.') || 
+                  window.location.hostname.startsWith('10.0.');
+
+    if (isLocal) return 'http://localhost:3000' + path;
+    if (isLAN)   return 'http://' + window.location.hostname + ':3000' + path;
+
+    // 3. Fallback: On Netlify/Production, use relative path if possible, 
+    //    or the explicitly configured BACKEND_URL if needed.
+    // If the frontend is hosted on the same server as the backend (like a single droplet),
+    // relative paths are always more stable.
+    if (!BACKEND_URL || BACKEND_URL === "") return path;
+    return (window.location.hostname === "" ? BACKEND_URL : "") + path;
 };
 
 // =========================================================================

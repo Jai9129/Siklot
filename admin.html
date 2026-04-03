@@ -609,7 +609,8 @@
                 localStorage.setItem('siklot_admin_token', adminToken);
                 document.getElementById('loginOverlay').style.display = 'none';
                 document.getElementById('app').style.display = 'flex';
-                loadAll();
+                // Wait a tiny bit for the UI to show before loading
+                setTimeout(loadAll, 100);
             } else {
                 throw new Error(d.error || 'Invalid credentials');
             }
@@ -689,16 +690,27 @@
 
     // ── Load all data ─────────────────────────────────────
     async function loadAll() {
+        // Individual try-catch blocks so one failure doesn't kill the whole dashboard
         try {
-            const [stats, msgs, usrs] = await Promise.all([
-                api('/api/admin/stats'),
-                api('/api/admin/messages'),
-                api('/api/admin/users'),
-            ]);
+            const stats = await api('/api/admin/stats');
             if (stats.success) applyStats(stats);
+        } catch(e) { console.error('Stats load failed:', e); }
+
+        try {
+            const msgs = await api('/api/admin/messages');
             if (msgs.success)  { allMessages = msgs.messages; renderMessages(allMessages); }
-            if (usrs.success)  { allUsers    = usrs.users;    renderUsers(allUsers); }
-        } catch(e) { toast('Failed to load data: ' + e.message, 'error'); }
+        } catch(e) { 
+            document.getElementById('msgBody').innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-circle-exclamation"></i><p>Failed to load messages.</p></div></td></tr>`;
+            toast('Failed to load messages', 'error');
+        }
+
+        try {
+            const usrs = await api('/api/admin/users');
+            if (usrs.success)  { allUsers = usrs.users; renderUsers(allUsers); }
+        } catch(e) {
+            document.getElementById('userBody').innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-circle-exclamation"></i><p>Failed to load users.</p></div></td></tr>`;
+            toast('Failed to load users', 'error');
+        }
     }
 
     // ── SERVICE labels ────────────────────────────────────
@@ -733,8 +745,8 @@
                 <td style="white-space:nowrap;font-size:0.8rem;color:var(--muted)">${m.receivedAt}</td>
                 <td><span class="badge ${m.status === 'unread' ? 'badge-red' : 'badge-green'}">${m.status === 'unread' ? '● Unread' : '✓ Read'}</span></td>
                 <td style="white-space:nowrap">
-                    <button class="action-btn btn-view" onclick="viewMsg(${m.id})"><i class="fa-solid fa-eye"></i> View</button>
-                    <button class="action-btn btn-del"  onclick="deleteMsg(${m.id})"><i class="fa-solid fa-trash"></i></button>
+                    <button class="action-btn btn-view" onclick="viewMsg('${m.id}')"><i class="fa-solid fa-eye"></i> View</button>
+                    <button class="action-btn btn-del"  onclick="deleteMsg('${m.id}')"><i class="fa-solid fa-trash"></i></button>
                 </td>
             </tr>
         `).join('');
@@ -826,7 +838,7 @@
                 <td style="white-space:nowrap;font-size:0.8rem;color:var(--muted)">${u.registeredAt}</td>
                 <td><span class="badge ${u.status === 'active' ? 'badge-green' : 'badge-gray'}">${u.status === 'active' ? '● Active' : '○ Inactive'}</span></td>
                 <td>
-                    <button class="action-btn btn-del" onclick="deleteUser(${u.id})"><i class="fa-solid fa-trash"></i> Delete</button>
+                    <button class="action-btn btn-del" onclick="deleteUser('${u.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
                 </td>
             </tr>
         `).join('');
