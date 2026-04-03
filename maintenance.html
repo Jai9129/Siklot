@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Under Maintenance | SicKloT</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: #050505;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 600px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .maint-icon {
+            font-size: 5rem;
+            color: #0088ff;
+            margin-bottom: 2rem;
+            animation: pulse-glow 2s infinite alternate;
+        }
+
+        @keyframes pulse-glow {
+            from { transform: scale(1); filter: drop-shadow(0 0 5px rgba(0, 136, 255, 0.5)); }
+            to { transform: scale(1.1); filter: drop-shadow(0 0 20px rgba(0, 136, 255, 0.8)); }
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #fff, #888);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            color: #aaa;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+        }
+
+        .discord-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: white;
+        }
+
+        .discord-card:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: #5865f2;
+            transform: translateY(-2px);
+        }
+
+        .discord-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-align: left;
+        }
+
+        .discord-info i {
+            font-size: 2rem;
+            color: #5865f2;
+        }
+
+        .discord-text h3 { margin: 0; font-size: 1rem; }
+        .discord-text span { color: #888; font-size: 0.85rem; }
+
+        .btn-join {
+            background: #5865f2;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* BG Glows */
+        .glow {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(0, 136, 255, 0.05) 0%, transparent 70%);
+            z-index: 1;
+            pointer-events: none;
+        }
+        .glow-1 { top: -100px; right: -100px; }
+        .glow-2 { bottom: -100px; left: -100px; }
+    </style>
+</head>
+<body>
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+
+    <div class="container">
+        <div class="maint-icon">
+            <i class="fa-solid fa-screwdriver-wrench"></i>
+        </div>
+        <h1>Under Maintenance</h1>
+        <p>We're currently performing some scheduled maintenance to improve your experience. Hang tight, we'll be back online shortly!</p>
+
+        <a href="https://discord.gg/YWmDpp5q3M" target="_blank" class="discord-card">
+            <div class="discord-info">
+                <i class="fa-brands fa-discord"></i>
+                <div class="discord-text">
+                    <h3>Join our Community</h3>
+                    <span>Get real-time status updates</span>
+                </div>
+            </div>
+            <div class="btn-join">Join Discord</div>
+        </a>
+    </div>
+</body>
+</html>

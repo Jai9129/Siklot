@@ -35,6 +35,7 @@ const MESSAGES_FILE = path.join(__dirname, 'messages.json');
 const USERS_FILE    = path.join(__dirname, 'users.json');
 const FEEDBACK_FILE = path.join(__dirname, 'feedback.json');
 const VERIFICATION_FILE = path.join(__dirname, 'verification-codes.json');
+const SETTINGS_FILE = path.join(__dirname, 'settings.json');
 
 // ════ SHEET COLUMN LAYOUTS ═══════════════════════════════════════════════
 const MSG_COLS  = ['id','receivedAt','firstName','lastName','email','discord','service','message','status'];
@@ -45,11 +46,43 @@ const FEEDBACK_COLS = ['id','submittedAt','name','rating','message','status'];
 let sheetsAPI  = null;  // Google Sheets API client (null = not connected)
 let googleMode = false; // true when connected to Google Sheets
 const adminSessions = new Map(); // token → expiry timestamp
+let isMaintenance = true;       // Persistence flag
+
+// Load settings on startup
+if (fs.existsSync(SETTINGS_FILE)) {
+    try {
+        const settings = JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf-8'));
+        isMaintenance = !!settings.isMaintenance;
+    } catch(e) { console.error('Failed to load settings:', e.message); }
+}
 
 // ════ MIDDLEWARE ═════════════════════════════════════════════════════════
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// ════ MAINTENANCE MIDDLEWARE ══════════════════════════════════════════════
+app.use((req, res, next) => {
+    // 1. Allow bypass if maintenance is OFF
+    if (!isMaintenance) return next();
+
+    // 2. Allow bypass if accessing Admin Panel or Admin APIs
+    const reqPath = req.path.toLowerCase();
+    const isAdminAPI = reqPath.startsWith('/api/admin/');
+    const isAssetPath = reqPath.endsWith('.css') || reqPath.endsWith('.png') || reqPath.endsWith('.js') || reqPath.includes('favicon');
+    const isMaintenancePage = reqPath === '/maintenance.html';
+
+    if (isAdminAPI || isAssetPath || isMaintenancePage) return next();
+
+    // 3. Otherwise, serve maintenance page
+    // Note: If maintenance.html doesn't exist, we send a simple message
+    const maintenanceFile = path.join(__dirname, 'maintenance.html');
+    if (fs.existsSync(maintenanceFile)) {
+        return res.sendFile(maintenanceFile);
+    }
+    res.status(503).send('<h1>SicKloT is currently under maintenance.</h1><p>We will be back shortly! Join our Discord for updates: <a href="https://discord.gg/YWmDpp5q3M">discord.gg/YWmDpp5q3M</a></p>');
+});
+
 app.use(express.static(__dirname));
 
 // ════ HELPERS: TIMESTAMP ═════════════════════════════════════════════════
@@ -425,6 +458,21 @@ app.get('/api/admin/stats', requireAdmin, async (req, res) => {
             mode:           googleMode ? 'google-sheets' : 'local-json',
             modeLabel:      googleMode ? '🟢 Google Sheets' : '🟡 Local JSON',
         });
+    } catch (e) { res.status(500).json({ success: false, error: e.message }); }
+});
+
+// ── Admin: Maintenance ───────────────────────────────────────────────────
+app.get('/api/admin/maintenance', requireAdmin, (req, res) => {
+    res.json({ success: true, isMaintenance });
+});
+
+app.post('/api/admin/maintenance', requireAdmin, (req, res) => {
+    const { active } = req.body;
+    isMaintenance = !!active;
+    try {
+        fs.writeFileSync(SETTINGS_FILE, JSON.stringify({ isMaintenance }, null, 2));
+        console.log(`🛠️ Maintenance Mode: ${isMaintenance ? 'ACTIVATED' : 'DEACTIVATED'}`);
+        res.json({ success: true, isMaintenance });
     } catch (e) { res.status(500).json({ success: false, error: e.message }); }
 });
 

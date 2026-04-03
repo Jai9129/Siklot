@@ -234,6 +234,40 @@
         .btn-del:hover { background:rgba(239,68,68,0.2); border-color:rgba(239,68,68,0.5); }
         .btn-view { background:rgba(0,85,255,0.1); color:var(--glow); border:1px solid rgba(0,132,255,0.2); margin-right:6px; }
         .btn-view:hover { background:rgba(0,85,255,0.2); }
+        .btn-view:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* ── Switch Toggle ── */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255,255,255,0.1);
+            transition: .4s;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 2px;
+            bottom: 2px;
+            background-color: #fff;
+            transition: .4s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        }
+        input:checked + .slider { background-color: #f59e0b; border-color: rgba(245,158,11,0.3); }
+        input:checked + .slider:before { transform: translateX(24px); }
+        .slider.round { border-radius: 24px; }
+        .slider.round:before { border-radius: 50%; }
 
         /* Empty state */
         .empty-state { padding:60px 20px; text-align:center; color:var(--muted); }
@@ -388,8 +422,12 @@
             <div class="sb-item" onclick="window.open('contact.html','_blank')">
                 <i class="fa-solid fa-paper-plane"></i> Contact Page
             </div>
+
+            <div class="sb-section">System</div>
+            <div class="sb-item" id="nav-settings" onclick="showTab('settings')">
+                <i class="fa-solid fa-gears"></i> System Settings
+            </div>
         </nav>
-        <div class="sb-footer">
             <div class="sb-user">
                 <div class="sb-avatar">AD</div>
                 <div>
@@ -522,6 +560,47 @@
                     </table>
                 </div>
             </div>
+
+            <!-- ── System Settings Section ── -->
+            <div class="table-section" id="section-settings">
+                <div class="section-header">
+                    <div class="section-title">
+                        <span class="dot" style="background:#f59e0b;box-shadow:0 0 8px #f59e0b;"></span>
+                        System Configuration
+                    </div>
+                </div>
+                
+                <div style="padding:24px;display:grid;gap:24px;">
+                    <!-- Maintenance Card -->
+                    <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.05);padding:24px;border-radius:16px;display:flex;align-items:center;justify-content:space-between;gap:20px;">
+                        <div style="display:flex;gap:16px;align-items:center;">
+                            <div style="width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,rgba(245,158,11,0.18),rgba(217,119,6,0.08));border:1px solid rgba(245,158,11,0.3);display:flex;align-items:center;justify-content:center;">
+                                <i class="fa-solid fa-screwdriver-wrench" style="font-size:1.4rem;color:#fbbf24;"></i>
+                            </div>
+                            <div>
+                                <h3 style="margin:0;font-size:1.1rem;color:white;">Maintenance Mode</h3>
+                                <p style="margin:4px 0 0;font-size:0.85rem;color:var(--muted);max-width:400px;">When enabled, visitors will see a maintenance page. Admin panel remains accessible.</p>
+                            </div>
+                        </div>
+                        
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <span id="maintStatus" style="font-size:0.8rem;font-weight:700;color:#ef4444;">DEACTIVATED</span>
+                            <label class="switch">
+                                <input type="checkbox" id="maintToggle" onchange="toggleMaintenance(this.checked)">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Info Card -->
+                    <div style="background:rgba(255,255,255,0.015);border:1px dashed rgba(255,255,255,0.08);padding:20px;border-radius:12px;display:flex;gap:12px;align-items:flex-start;">
+                        <i class="fa-solid fa-circle-info" style="color:rgba(0,136,255,0.5);margin-top:3px;"></i>
+                        <div style="font-size:0.85rem;color:rgba(255,255,255,0.5);line-height:1.5;">
+                            Maintenance mode is persistent. Even if the server restarts, the site will remain in the last chosen state. Always remember to turn it OFF once your updates are complete!
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 </div>
@@ -647,24 +726,35 @@
     }
 
     // ── Tab nav ───────────────────────────────────────────
-    function showTab(tab) {
-        document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
-        const titles = {
-            overview:  ['Dashboard', 'Overview of all SicKloT activity'],
-            messages:  ['Message Requests', 'All contact form submissions from users'],
-            users:     ['Register Requests', 'All user registration submissions'],
-        };
-        if (tab !== 'overview') {
-            document.getElementById(`nav-${tab}`).classList.add('active');
-        } else {
-            document.querySelector('.sb-item').classList.add('active');
-        }
-        document.getElementById('pageTitle').textContent    = titles[tab][0];
-        document.getElementById('pageSubtitle').textContent = titles[tab][1];
+    function showTab(id) {
+        // Update sidebar items
+        document.querySelectorAll('.sb-item').forEach(el => el.classList.remove('active'));
+        const navId = id === 'overview' ? 'nav-overview' : `nav-${id}`;
+        const navEl = document.getElementById(navId);
+        if (navEl) navEl.classList.add('active');
+        else if (id === 'overview') document.querySelector('.sb-item').classList.add('active');
 
-        // Scroll to relevant section
-        if (tab === 'messages') document.getElementById('section-messages').scrollIntoView({behavior:'smooth'});
-        if (tab === 'users')    document.getElementById('section-users').scrollIntoView({behavior:'smooth'});
+        // Show/Hide sections
+        document.getElementById('section-messages').style.display = id === 'messages' ? 'block' : 'none';
+        document.getElementById('section-users').style.display    = id === 'users'    ? 'block' : 'none';
+        document.getElementById('section-settings').style.display = id === 'settings' ? 'block' : 'none';
+        document.querySelector('.stats-row').style.display        = id === 'overview' ? 'flex'  : 'none';
+
+        // Update titles
+        const titles = {
+            'overview': ['Dashboard', 'Overview of all SicKloT activity'],
+            'messages': ['Messages', 'Manage incoming contact forms'],
+            'users':    ['Users', 'Manage registered community members'],
+            'settings': ['System Settings', 'Configure production server environment']
+        };
+        const [t, s] = titles[id] || titles.overview;
+        document.getElementById('pageTitle').textContent = t;
+        document.getElementById('pageSubtitle').textContent = s;
+
+        // Scroll to relevant section if not overview
+        if (id !== 'overview' && id !== 'settings') {
+            document.getElementById(`section-${id}`)?.scrollIntoView({ behavior: 'smooth' });
+        }
     }
 
     // ── Apply stats ───────────────────────────────────────
@@ -710,6 +800,36 @@
         } catch(e) {
             document.getElementById('userBody').innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-circle-exclamation"></i><p>Failed to load users.</p></div></td></tr>`;
             toast('Failed to load users', 'error');
+        }
+
+        // Fetch maintenance status
+        try {
+            const m = await api('/api/admin/maintenance');
+            if (m.success) updateMaintUI(m.isMaintenance);
+        } catch(e) {}
+    }
+
+    function updateMaintUI(active) {
+        document.getElementById('maintToggle').checked = active;
+        const status = document.getElementById('maintStatus');
+        status.textContent = active ? 'ACTIVATED' : 'DEACTIVATED';
+        status.style.color = active ? '#ef4444' : '#6b7280';
+    }
+
+    async function toggleMaintenance(active) {
+        try {
+            const res = await api('/api/admin/maintenance', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ active })
+            });
+            if (res.success) {
+                updateMaintUI(res.isMaintenance);
+                toast(`Maintenance mode ${res.isMaintenance ? 'enabled' : 'disabled'}`);
+            }
+        } catch (e) {
+            toast('Failed to toggle: ' + e.message, 'error');
+            document.getElementById('maintToggle').checked = !active; // Revert checkbox
         }
     }
 
